@@ -56,6 +56,13 @@ class Constants{
     static let fired = "fired"
    
     
+    //Custom Dimension keys
+    static let runCount = 1
+    static let dayCount = 2
+    static let reviewScreen = 3
+    static let resultScreen = 4
+    
+   
     
     
 }

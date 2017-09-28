@@ -250,7 +250,7 @@ class DatabaseManagement
                      img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [contact[PATH]], options: nil)[0])
                     
                     images.append(img)
-                
+                   
                     print(contact[PATH])
                 }
                // deleteContact(mPath: contact[PATH])
@@ -313,7 +313,15 @@ class DatabaseManagement
         
         do {
             for contact in try db!.prepare(self.images!) {
-                if(Int(contact[RESPONSE_STATUS]) == 1 || Int(contact[RESPONSE_STATUS]) == 2 || Int(contact[RESPONSE_STATUS]) == 3)
+                if(Int(contact[RESPONSE_STATUS]) == 1)
+                {
+                    images=images+1
+                }
+                else if(Int(contact[RESPONSE_STATUS]) == 2)
+                {
+                    images=images+1
+                }
+                else if(Int(contact[RESPONSE_STATUS]) == 3)
                 {
                     images=images+1
                 }

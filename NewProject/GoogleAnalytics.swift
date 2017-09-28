@@ -20,6 +20,7 @@ class GoogleAnalytics
     {
         guard let gai = GAI.sharedInstance() else {
             assert(false, "Google Analytics not configured correctly")
+            return
         }
         
         self.gai = gai
@@ -56,6 +57,11 @@ class GoogleAnalytics
         tracker.send(builder.build() as [NSObject : AnyObject])
     }
     
+    
+    func signInGoogleAnalytics(custDimKey : Int, custDimVal : String) {
+        
+        tracker?.send(GAIDictionaryBuilder.createScreenView().set(custDimVal, forKey: GAIFields.customDimension(for : UInt(custDimKey))).build() as NSDictionary as [NSObject : AnyObject])
+    }
     
     
 }

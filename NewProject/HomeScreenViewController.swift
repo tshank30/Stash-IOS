@@ -8,10 +8,12 @@
 
 import UIKit
 import UserNotifications
+import SwiftyGif
 
 class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VCFinalDelegate, ReviewDelegate, FinalDelegate  {
     
     
+    @IBOutlet weak var ghost: UIImageView!
     @IBOutlet weak var junkNumber: UILabel!
     @IBOutlet var homeBackground: UIView!
     @IBOutlet weak var resultsLabel: UILabel!
@@ -97,13 +99,82 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         
         
-               /* var dateComponents = DateComponents()
-        dateComponents.day = 10
-        dateComponents.hour = 10
-        dateComponents.minute = 30
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)*/
+        let gifManager = SwiftyGifManager(memoryLimit:20)
+        let gif = UIImage(gifName: "bars")
+        let imageview = UIImageView(gifImage: gif, manager: gifManager)
+        imageview.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: (self.homeBackground.frame.size.height-40.0)/2, width: 40.0, height: 40.0)
         
-        // Do any additional setup after loading the view.
+        imageview.frame = CGRect(x: self.view.frame.size.width - imageview.frame.size.width - 5,y: 0 , width:imageview.frame.size.width, height: imageview.frame.size.height)
+        
+        
+        view.addSubview(imageview)
+//        let jeremyGif = UIImage.gifImageWithName("bars")
+//        let imageView = UIImageView(image: jeremyGif)
+//        imageView.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: 10, width: 40.0, height: 40.0)
+//        view.addSubview(imageView)
+        
+        let dateFormatter = DateFormatter()
+        let requestedComponent: Set<Calendar.Component> = [.year,.month,.day,.hour,.minute,.second]
+        let userCalendar = Calendar.current
+        
+        
+        dateFormatter.dateFormat = "ddMMyyhhmmss"
+        let timeRightNow  = Date()
+        let timeRightNowResult = dateFormatter.string(from: timeRightNow)
+        
+        let timePrevious  = Preferences.shared.getDayTimePreference()
+        let startTime = dateFormatter.date(from: timePrevious)
+        
+        if startTime != nil {
+    
+            let timeDifference = userCalendar.dateComponents(requestedComponent, from: timeRightNow, to: startTime!)
+            
+            
+            if let year = timeDifference.year { // If casting, use, eg, if let var = abc as? NSString
+                // variableName will be abc, unwrapped
+                if(year>0)
+                {
+                    let calendar = Calendar.current
+                    let date = calendar.date(byAdding: .day, value: 1, to: startTime!)
+                    let timeRightNowResult = dateFormatter.string(from: date!)
+                    Preferences.shared.setDayTime(date: String(describing : timeRightNowResult))
+                    //Preferences.shared.setDayCountDimension()
+                    GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal:  Preferences.shared.setDayCountDimension())
+                }
+                
+            }else if let month = timeDifference.month {
+                // abc is nil
+                if(month>0)
+                {
+                    let calendar = Calendar.current
+                    let date = calendar.date(byAdding: .day, value: 1, to: startTime!)
+                    let timeRightNowResult = dateFormatter.string(from: date!)
+                    Preferences.shared.setDayTime(date: String(describing : timeRightNowResult))
+                    //Preferences.shared.setDayCountDimension()
+                    GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal: Preferences.shared.setDayCountDimension())
+                }
+            }else if let days = timeDifference.day
+            {
+                if(days > 0)
+                {
+                    let calendar = Calendar.current
+                    let date = calendar.date(byAdding: .day, value: 1, to: startTime!)
+                    let timeRightNowResult = dateFormatter.string(from: date!)
+                    Preferences.shared.setDayTime(date: String(describing : timeRightNowResult))
+                    //Preferences.shared.setDayCountDimension()
+                    GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal:  Preferences.shared.setDayCountDimension())
+                    
+                }
+            }
+            
+        }
+        else
+        {
+             Preferences.shared.setDayTime(date: String(describing : timeRightNowResult))
+             //Preferences.shared.setDayCountDimension()
+             GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal:  Preferences.shared.setDayCountDimension())
+        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {

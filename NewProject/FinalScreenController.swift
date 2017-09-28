@@ -74,6 +74,8 @@ class FinalScreenController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.resultScreen, custDimVal: String(describing : Preferences.shared.setResultScreenPreference()))
+        
         if(deletionCount == 1)
         {
             headerText.text = "\(deletionCount!) Photo moved to trash"

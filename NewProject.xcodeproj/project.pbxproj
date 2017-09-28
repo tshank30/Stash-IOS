@@ -90,6 +90,7 @@
 		D32EA23A1F5FF484003BED22 /* RecoverPhotos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoverPhotos.swift; sourceTree = "<group>"; };
 		D34354341F2B591800100667 /* Receiver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Receiver.swift; sourceTree = "<group>"; };
 		D34354361F2B598D00100667 /* SenderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SenderViewController.swift; sourceTree = "<group>"; };
+		D3627B5F1F7BF052004EE5BB /* bars.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = bars.gif; sourceTree = "<group>"; };
 		D38928431F4D8F4D0088D4AC /* ScanningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanningViewController.swift; sourceTree = "<group>"; };
 		D3948D381F458CAA0093D85D /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		D3948D3A1F45D3F40093D85D /* ReviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewViewController.swift; sourceTree = "<group>"; };
@@ -233,6 +234,7 @@
 				D304F61C1F26153C00BA014B /* CollectionViewController.swift */,
 				D304F61E1F26160A00BA014B /* CollectionViewCell.swift */,
 				D328AD421F6815D8009A51E2 /* TrashCollectionViewCell.swift */,
+				D3627B5F1F7BF052004EE5BB /* bars.gif */,
 				D3089B6E1F2A1ADA00C5C66F /* HomeScreenViewController.swift */,
 				D34354341F2B591800100667 /* Receiver.swift */,
 				D34354361F2B598D00100667 /* SenderViewController.swift */,
@@ -493,12 +495,14 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-NewProject/Pods-NewProject-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyGif/SwiftyGif.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyGif.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

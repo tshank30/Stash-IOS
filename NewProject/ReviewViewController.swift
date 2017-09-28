@@ -8,6 +8,7 @@
 
 import UIKit
 import Photos
+import SwiftyGif
 
 private let reuseIdentifier = "review_cell"
 
@@ -19,16 +20,25 @@ protocol ReviewDelegate {
 
 class ReviewViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
 
+    
+    @IBOutlet weak var scanningView: UIView!
+    @IBOutlet weak var selectAllBtn: UIButton!
+   // @IBOutlet weak var scanningView: UIView!
+    @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var headerText: UILabel!
     typealias CompletionHandler = (_ success:Bool) -> Void
     var asset : PHFetchResult<PHAsset>?
     var deletionAsset : [PHAsset]?
     var dataModel : [ImageModel]?
+    var newDataModel : [ImageModel]?
     var deletionSet : [String]?
     var yourCellInterItemSpacing : CGFloat?
     
     var delegate: ReviewDelegate?
     var folderPath : URL?
+    var refresh = true
+    var allSelected = false
     
     
     var image: UIImage!
@@ -48,6 +58,11 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 //    e. Total no of images
     
     
+    @IBAction func selectUnselectAll(_ sender: Any) {
+        
+        selectAll(select: !allSelected)
+        
+    }
     
     @IBAction func deleteImages(_ sender: Any) {
         
@@ -144,11 +159,6 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
 
     
-    func updateTitle()
-    {
-         self.title = " \(deletionSet?.count ?? 0) Photos Selected"
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
          GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
     }
@@ -157,6 +167,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.reviewScreen, custDimVal: String(describing : Preferences.shared.setReviewScreenPreference))
        updateTitle()
        // self.navigationBar.topItem.title = "\(deletionSet?.count) Photos Selected"
         
@@ -177,13 +188,22 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         deletionSet=[String]()
         
-        dataModel=getData()
+        dataModel=[ImageModel]()
+        newDataModel=getData()
         
-        selectOrDeselectAll(select: true)
+        
+        
+        let gifManager = SwiftyGifManager(memoryLimit:20)
+        let gif = UIImage(gifName: "bars")
+        let imageview = UIImageView(gifImage: gif, manager: gifManager)
+        imageview.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: (self.scanningView.frame.size.height-40.0)/2, width: 40.0, height: 40.0)
+        scanningView.addSubview(imageview)
+    
+        selectAll(select: true)
         
         print("Total Photos",  asset?.count ?? "No Photos in whatsapp")
 
-        headerText.text = "\(String(describing: dataModel?.count)) Junk Photos Found"
+        
         // Do any additional setup after loading the view.
         
         GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreen, label: "\(String(describing: dataModel?.count))")
@@ -199,7 +219,18 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 
              Preferences.shared.setfistTimePreference()
         }
-            
+        
+        updateHeader()
+        
+        if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
+        {
+            refreshScreen()
+        }
+        else{
+//            scanningView.isHidden=true
+            scanningViewHeightConstraint.constant = 0
+        }
+      
         
     }
 
@@ -218,6 +249,62 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         // Pass the selected object to the new view controller.
     }
     */
+    
+    
+    
+    func updateTitle()
+    {
+        self.title = "\(deletionSet?.count ?? 0) Photos Selected"
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        refresh=false
+    }
+    
+    
+    func refreshScreen()
+    {
+        
+        print("Refresh Recycler")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
+            //self.dataModel=self.getData()
+            self.newDataModel=self.getData()
+            self.selectOrDeselectAll(select: true)
+            self.dataModel=self.newDataModel
+            self.updateHeader()
+            self.collectionView.reloadData()
+           
+            if(self.deletionSet?.count == self.dataModel?.count)
+            {
+                self.allSelected=true
+            }
+            else{
+                self.allSelected=false
+            }
+            
+            self.checkUncheckAllBtn()
+            
+        if(DatabaseManagement.shared.getScannedImages()==DatabaseManagement.shared.getTotalImageCount())
+        {
+                self.refresh=false
+                self.scanningViewHeightConstraint.constant = 0
+                //self.scanningView.isHidden=true
+        }
+            
+        if(self.refresh==true)
+        {
+            self.refreshScreen()
+        }
+
+            //self.refreshScreen()
+            
+        })
+    }
+    
+    func updateHeader()
+    {
+         headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -312,6 +399,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             print(success ? "Success" : error )
         })*/
         updateTitle()
+        checkUncheckAllBtn()
         
         print("clicked")
         return true
@@ -319,24 +407,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
 
     
-    func collectionView(_ collectionView: UICollectionView,
-                                 viewForSupplementaryElementOfKind kind: String,
-                                 at indexPath: IndexPath) -> UICollectionReusableView {
-        //1
-        switch kind {
-        //2
-        case UICollectionElementKindSectionHeader:
-            //3
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: "header",
-                                                                             for: indexPath) as! CollectionHeader
-            headerView.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x1D8C7E)
-            return headerView
-        default:
-            //4
-            assert(false, "Unexpected element kind")
-        }
-    }
+    
     
     
     func getAssetsFromAlbum(albumName: String) -> [PHAsset] {
@@ -580,24 +651,93 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func selectOrDeselectAll(select : Bool)
     {
-        deletionSet?.removeAll()
-        deletionAsset?.removeAll()
+        //deletionSet?.removeAll()
+        //deletionAsset?.removeAll()
         
-        for img in dataModel!
+        for img in newDataModel!
         {
-            img.setChecked(checked: select)
             
-            if(select)
+            
+            if(dataModel?.contains{$0 === img} == false)
             {
+                print("datamodeldonotcontails checked")
+                img.setChecked(checked: true)
                 deletionSet?.append((img.getIdentifier()))
                 deletionAsset?.append((img.getPHAsset()))
             }
+            else if(dataModel?.contains{$0 === img} == true &&  deletionSet?.contains{$0 == img.getIdentifier()} == true)
+            {
+                print("datamodelcontains checked")
+                img.setChecked(checked: true)
+            }
+            else{
+                print(dataModel?.contains{$0 === img})
+                print("datamodelcontains previously unchecked")
+                img.setChecked(checked: false)
+            }
+            
+         
         }
         
+        //checkUncheckAllBtn()
         collectionView.reloadData()
         updateTitle()
         
     }
 
+    
+    
+    func selectAll(select : Bool)
+    {
+        deletionSet?.removeAll()
+        deletionAsset?.removeAll()
+        
+        for img in newDataModel!
+        {
+            img.setChecked(checked: select)
+            
+            if(select==true)
+            {
+                deletionSet?.append(img.getIdentifier())
+                deletionAsset?.append(img.getPHAsset())
+            }
+            
+        }
+        
+        if(select == true)
+        {
+            allSelected=true
+        }
+        else
+        {
+            allSelected=false
+        }
+        
+        checkUncheckAllBtn()
+        collectionView.reloadData()
+        updateTitle()
+        
+    }
+
+    
+    func checkUncheckAllBtn()
+    {
+        if(self.deletionSet?.count == self.dataModel?.count)
+        {
+            allSelected=true
+             selectAllBtn.setImage(UIImage(named: "select_all_checked.png"), for: UIControlState.normal)
+        }
+        else if(self.deletionSet?.count == 0)
+        {
+             allSelected=false
+            selectAllBtn.setImage(UIImage(named: "none_selected.png"), for: UIControlState.normal)
+        }
+        else{
+            allSelected=false
+            selectAllBtn.setImage(UIImage(named: "select_all_unchecked.png"), for: UIControlState.normal)
+        }
+        
+       
+    }
 
 }

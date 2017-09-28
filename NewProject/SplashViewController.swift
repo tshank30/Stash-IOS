@@ -8,6 +8,7 @@
 
 import UIKit
 import Photos
+import UserNotifications
 
 class SplashViewController: UIViewController {
 
@@ -18,7 +19,7 @@ class SplashViewController: UIViewController {
     var trashPath : String?
     let myGroup = DispatchGroup()
     var semaphore : DispatchSemaphore?
-    
+    var request=0;
     
     
     
@@ -27,7 +28,17 @@ class SplashViewController: UIViewController {
         super.viewDidLoad()
         
         navigationController?.navigationBar.barTintColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x1D8C7E)
+        GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.runCount, custDimVal: Preferences.shared.setRunCountPreference())
        
+        
+//        let content = UNMutableNotificationContent()
+//        content.title = "Don't forget"
+//        content.body = "Buy some milk"
+//        content.sound = UNNotificationSound.default()
+//        
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
+//                                                        repeats: false)
+        
         // Do any additional setup after loading the view.
     }
 
@@ -115,7 +126,7 @@ class SplashViewController: UIViewController {
         
         
         let myOpQueue = OperationQueue()
-        myOpQueue.maxConcurrentOperationCount = 3
+        myOpQueue.maxConcurrentOperationCount = 4
 
         semaphore = DispatchSemaphore(value: 0) // DispatchSemaphore(value: 0)
         
@@ -130,9 +141,6 @@ class SplashViewController: UIViewController {
                     results.enumerateObjects({ (obj, index, stop) in
                         
                         if let asset = obj as? PHAsset {
-                            
-                            
-
                             
                             if asset.mediaType == .image{
                                 assets.append(asset)
@@ -163,18 +171,9 @@ class SplashViewController: UIViewController {
                                                 
                                                     self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier())
                                                 
-                                                
                                                 }
                                                 
-                                                
-                                                
-                                                /*let operation : BlockOperation = BlockOperation(block: {
-                                                    self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier())
-                                                })
-                                                
-                                                //operation.addDependency((self.queue?.operations.last!)!)
-                                                
-                                                self.queue?.addOperation(operation);*/
+                                    
                                                 
                                             }
                                             
@@ -212,7 +211,7 @@ class SplashViewController: UIViewController {
                         //}
                     })
                     
-                    myGroup.notify(queue: .main) {
+                   myGroup.notify(queue: .main) {
                         print("Finished all requests.")
                     }
 
@@ -342,11 +341,28 @@ class SplashViewController: UIViewController {
     }
     
     func UploadRequest(image : UIImage, mPath : String)     {
-        
+        var url : NSURL?
        
-        
-        let url = NSURL(string: "http://akshit92.pythonanywhere.com/")
-        
+        if(self.request==0)
+        {
+             url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
+            self.request=1
+        }
+        else if(self.request==1)
+        {
+             url = NSURL(string: "http://dean96633.pythonanywhere.com/polls/")
+            self.request=2
+        }
+        else if(self.request==2)
+        {
+             url = NSURL(string: "http://akshit92.pythonanywhere.com/")
+            self.request=3
+        }
+        else if(self.request==3)
+        {
+             url = NSURL(string: "http://aki92.pythonanywhere.com/")
+            self.request=0
+        }
         let request = NSMutableURLRequest(url: url! as URL)
         request.httpMethod = "POST"
         

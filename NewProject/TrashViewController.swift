@@ -78,6 +78,8 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             
         }
         
+        deletionSet?.removeAll()
+        
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.imagesRestore, label: "\(String(describing: deletionSet?.count))")
         
         dataModel=getData()
@@ -102,9 +104,11 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
                           
         }
         
+        
+        
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.permanentDeletion, label: "\(String(describing: deletionSet?.count))")
 
-        
+        deletionSet?.removeAll()
         dataModel=getData()
         collectionView.reloadData()
         
@@ -147,7 +151,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func permanentDeletionAlert()
     {
-        let alert = UIAlertController(title: "Recover Photos", message: "Do you want to permanently delete  \(deletionSet?.count ?? 0) photos?", preferredStyle: UIAlertControllerStyle.alert)
+        let alert = UIAlertController(title: "Delete Photos", message: "Do you want to permanently delete  \(deletionSet?.count ?? 0) photos?", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
         
@@ -327,24 +331,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
      }*/
     
     
-    func collectionView(_ collectionView: UICollectionView,
-                        viewForSupplementaryElementOfKind kind: String,
-                        at indexPath: IndexPath) -> UICollectionReusableView {
-        //1
-        switch kind {
-        //2
-        case UICollectionElementKindSectionHeader:
-            //3
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: "header",
-                                                                             for: indexPath) as! CollectionHeader
-            headerView.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x1D8C7E)
-            return headerView
-        default:
-            //4
-            assert(false, "Unexpected element kind")
-        }
-    }
+    
     
     
     func getData() -> [ImageModel]?

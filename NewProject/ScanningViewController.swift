@@ -15,6 +15,7 @@ protocol VCFinalDelegate {
 class ScanningViewController: UIViewController {
 
     
+    @IBOutlet weak var progress: UIProgressView!
     @IBOutlet weak var scanningText: UILabel!
     var delegate: VCFinalDelegate!
     
@@ -27,6 +28,8 @@ class ScanningViewController: UIViewController {
         
         scanningText.text = "Scanning \(DatabaseManagement.shared.getScannedImages())/\(DatabaseManagement.shared.getTotalImageCount())"
 
+        progress.progress=Float(DatabaseManagement.shared.getScannedImages()*100/DatabaseManagement.shared.getTotalImageCount())
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: {            
             
             var viewControllersArray = self.navigationController?.viewControllers
@@ -43,26 +46,6 @@ class ScanningViewController: UIViewController {
             viewControllersArray?.append(controller)
             
             self.navigationController?.setViewControllers(viewControllersArray!, animated: true)
-            
-            
-//                self.navigationController?.popViewController(animated: true)
-//            self.navigationController
-//                self.delegate?.finishPassing(string: "Sent from VCFinal")
-            
-            
-            
-                /*let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "review_grid") as! ReviewViewController
-                //self.present(nextViewController, animated:true, completion:nil)
-                self.navigationController?.pushViewController(nextViewController, animated: true)
-                */
-                
-                // topController should now be your topmost view controller
-            
-            
-            
-          
             
         })
 

@@ -171,24 +171,7 @@ class CollectionViewController: UICollectionViewController{
     }*/
     
     
-    override func collectionView(_ collectionView: UICollectionView,
-                                 viewForSupplementaryElementOfKind kind: String,
-                                 at indexPath: IndexPath) -> UICollectionReusableView {
-        //1
-        switch kind {
-        //2
-        case UICollectionElementKindSectionHeader:
-            //3
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: "header",
-                                                                             for: indexPath) as! CollectionHeader
-            headerView.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x1D8C7E)
-            return headerView
-        default:
-            //4
-            assert(false, "Unexpected element kind")
-        }
-    }
+   
     
     
     func getAssetsFromAlbum(albumName: String) -> [PHAsset] {

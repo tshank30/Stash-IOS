@@ -20,12 +20,22 @@ class DeletionViewController: UIViewController {
     var delegate: FinalDelegate?
     var deletionNumber : Int!
 
+    @IBOutlet weak var progress: UIProgressView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.hidesBackButton = true
         navigationController?.navigationBar.isUserInteractionEnabled = false
+        
+        //progress.progress=Float(0)
+        
+        //progress.setProgress(0.01, animated: true)
+        
+        UIView.animate(withDuration: 3.0, delay: 0.0, options: .curveLinear, animations: {
+            self.progress.setProgress(1.0, animated: true)
+        }, completion: nil)
+        
         
         if(deletionNumber==1)
         {
@@ -43,6 +53,7 @@ class DeletionViewController: UIViewController {
             var viewControllersArray = self.navigationController?.viewControllers
             viewControllersArray?.removeLast()
             
+            //self.progress.progress=Float(100)
             
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let controller = storyboard.instantiateViewController(withIdentifier: "finalScreen") as! FinalScreenController
