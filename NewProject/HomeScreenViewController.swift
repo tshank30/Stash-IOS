@@ -100,7 +100,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         
         
         let gifManager = SwiftyGifManager(memoryLimit:20)
-        let gif = UIImage(gifName: "bars")
+        let gif = UIImage(gifName: "loading_gif")
         let imageview = UIImageView(gifImage: gif, manager: gifManager)
         imageview.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: (self.homeBackground.frame.size.height-40.0)/2, width: 40.0, height: 40.0)
         

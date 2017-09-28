@@ -234,7 +234,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524405787.493949"
+            timestampString = "528279444.808824"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "65"
@@ -250,7 +250,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.809514"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "140"
@@ -266,12 +266,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.810073"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "254"
             endingLineNumber = "254"
-            landmarkName = "load(fileName:)"
+            landmarkName = "getImageFromIdentifier(identifier:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -282,13 +282,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.810575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "257"
             endingLineNumber = "257"
-            landmarkName = "CollectionViewController"
-            landmarkType = "3">
+            landmarkName = "getImageFromIdentifier(identifier:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -298,13 +298,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.811093"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "260"
             endingLineNumber = "260"
-            landmarkName = "getImageFromIdentifier(identifier:)"
-            landmarkType = "7">
+            landmarkName = "CollectionViewController"
+            landmarkType = "3">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -346,27 +346,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.8116"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "262"
             endingLineNumber = "262"
-            landmarkName = "getImageFromIdentifier(identifier:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
             landmarkName = "getImage()"
             landmarkType = "7">
          </BreakpointContent>
@@ -378,12 +362,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.812108"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
-            landmarkName = "getImageFromIdentifier(identifier:)"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "getAssetThumbnail(asset:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -394,7 +378,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524563795.548068"
+            timestampString = "528279444.812603"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
+            landmarkName = "CollectionViewController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/CollectionViewController.swift"
+            timestampString = "528279444.813099"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "46"
@@ -410,7 +410,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524563797.305317"
+            timestampString = "528279444.813595"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
@@ -426,7 +426,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524563855.084369"
+            timestampString = "528279444.814115"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "49"
@@ -442,12 +442,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.814578"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "269"
             endingLineNumber = "269"
-            landmarkName = "getImageFromIdentifier(identifier:)"
+            landmarkName = "getImage()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -458,12 +458,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.815049"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "270"
             endingLineNumber = "270"
-            landmarkName = "getImageFromIdentifier(identifier:)"
+            landmarkName = "getImage()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -586,7 +586,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524733169.804448"
+            timestampString = "528279444.815571"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "164"
@@ -602,7 +602,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524663649.262801"
+            timestampString = "528279444.816042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "130"
@@ -650,7 +650,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524663649.262801"
+            timestampString = "528279444.816509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "131"
@@ -698,7 +698,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/CollectionViewController.swift"
-            timestampString = "524663649.262801"
+            timestampString = "528279444.816974"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "132"
@@ -730,7 +730,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.931436"
+            timestampString = "528280836.710491"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
@@ -778,7 +778,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.933166"
+            timestampString = "528280836.711193"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "455"
@@ -794,7 +794,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.933664"
+            timestampString = "528280836.711724"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "466"
@@ -810,7 +810,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.93413"
+            timestampString = "528280836.712232"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "468"
@@ -826,7 +826,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.934587"
+            timestampString = "528280836.712725"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "462"
@@ -986,7 +986,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.935104"
+            timestampString = "528280836.71327"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "20"
@@ -1066,7 +1066,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/HomeScreenViewController.swift"
-            timestampString = "528216722.075698"
+            timestampString = "528280836.713801"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "126"
@@ -1082,7 +1082,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.935614"
+            timestampString = "528280836.713847"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "204"
@@ -1098,7 +1098,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528277296.936072"
+            timestampString = "528280836.71432"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "209"
@@ -1130,11 +1130,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Pods/SwiftyGif/SwiftyGif/UIImage+SwiftyGif.swift"
-            timestampString = "528216655.916046"
+            timestampString = "528280836.714813"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
             landmarkName = "setGif(_:levelOfIntegrity:)"
             landmarkType = "7">
          </BreakpointContent>
