@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="gut-oX-Zya">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="gut-oX-Zya">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,13 +21,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="stash_buuble" translatesAutoresizingMaskIntoConstraints="NO" id="t6g-ot-mQ8">
-                                <rect key="frame" x="165" y="312" width="64" height="64"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appIcon" translatesAutoresizingMaskIntoConstraints="NO" id="t6g-ot-mQ8">
+                                <rect key="frame" x="107" y="254" width="180" height="180"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.069189481437206268" green="0.54697889089584351" blue="0.4949953556060791" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="t6g-ot-mQ8" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="10.5" id="OKP-lX-VXU"/>
+                            <constraint firstItem="t6g-ot-mQ8" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" constant="9.5" id="Ujf-bG-HcF"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7Uq-jq-efZ"/>
                 </viewController>
@@ -41,7 +44,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gut-oX-Zya" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zal-8E-RIr">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -55,6 +58,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="stash_buuble" width="44" height="43"/>
+        <image name="appIcon" width="180" height="180"/>
     </resources>
 </document>

@@ -127,22 +127,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cyp-ym-Rvr">
-                                <rect key="frame" x="0.0" y="64" width="414" height="502"/>
+                                <rect key="frame" x="-0.66666666666665719" y="64" width="414.33333333333337" height="502"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="home_bkg" translatesAutoresizingMaskIntoConstraints="NO" id="gEH-M1-EqK">
-                                        <rect key="frame" x="19" y="61" width="375" height="380"/>
+                                        <rect key="frame" x="19.666666666666657" y="61" width="375" height="380"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rectangle" translatesAutoresizingMaskIntoConstraints="NO" id="KGl-IW-B1B">
-                                        <rect key="frame" x="70" y="148" width="274" height="205"/>
+                                        <rect key="frame" x="70.666666666666686" y="148" width="274" height="205"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ghost" translatesAutoresizingMaskIntoConstraints="NO" id="s4M-19-XQY">
-                                        <rect key="frame" x="310" y="163" width="114" height="177"/>
+                                        <rect key="frame" x="310.33333333333337" y="163" width="114" height="177"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="s4M-19-XQY" secondAttribute="height" multiplier="38:59" id="sfa-Hl-M1c"/>
                                         </constraints>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rgJ-ej-vCL">
-                                        <rect key="frame" x="131" y="185.33333333333337" width="152" height="130.66666666666663"/>
+                                        <rect key="frame" x="131.66666666666666" y="185.33333333333337" width="151.99999999999997" height="130.66666666666663"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="212" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QRa-Kg-ROa">
                                                 <rect key="frame" x="0.0" y="0.0" width="152" height="107.66666666666666"/>
@@ -449,7 +449,7 @@
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </progressView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning Photos :128/512" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CN5-vt-LE2">
-                                <rect key="frame" x="108" y="648" width="199" height="21"/>
+                                <rect key="frame" x="107.66666666666669" y="648" width="199" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -568,7 +568,7 @@
                                 <rect key="frame" x="0.0" y="64" width="414" height="40"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning in background ..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NQG-Xd-SRX" userLabel="Scanningtxt">
-                                        <rect key="frame" x="5" y="0.0" width="192.33333333333334" height="40"/>
+                                        <rect key="frame" x="5" y="0.0" width="192.66666666666666" height="40"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <color key="textColor" red="0.92931067940000001" green="0.92946994299999997" blue="0.92930072549999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="highlightedColor" red="0.069189481437206268" green="0.54697889089584351" blue="0.4949953556060791" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -777,7 +777,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="group7" translatesAutoresizingMaskIntoConstraints="NO" id="2lE-uS-oyy">
-                                <rect key="frame" x="49" y="214" width="316" height="309"/>
+                                <rect key="frame" x="49" y="213.66666666666663" width="316" height="309"/>
                             </imageView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TRJ-nv-u2P">
                                 <rect key="frame" x="60" y="676" width="294" height="2"/>
@@ -1097,13 +1097,16 @@ install more apps.</string>
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="stash_buuble" translatesAutoresizingMaskIntoConstraints="NO" id="65g-AK-BBf">
-                                <rect key="frame" x="165" y="312" width="64" height="64"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appIcon" translatesAutoresizingMaskIntoConstraints="NO" id="65g-AK-BBf">
+                                <rect key="frame" x="117" y="278" width="180" height="180"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.069189481437206268" green="0.54697889089584351" blue="0.4949953556060791" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="65g-AK-BBf" firstAttribute="centerY" secondItem="pF3-LM-XkH" secondAttribute="centerY" id="WzR-PJ-UUo"/>
+                            <constraint firstItem="65g-AK-BBf" firstAttribute="centerX" secondItem="pF3-LM-XkH" secondAttribute="centerX" id="j9W-pK-WEb"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="3j5-4d-02z"/>
                     <connections>
@@ -1112,7 +1115,7 @@ install more apps.</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OlI-FE-ql7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2295" y="-212"/>
+            <point key="canvasLocation" x="-2295.6521739130435" y="-212.77173913043481"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Lru-C6-htu">
@@ -1170,6 +1173,7 @@ install more apps.</string>
         </scene>
     </scenes>
     <resources>
+        <image name="appIcon" width="180" height="180"/>
         <image name="backChevron" width="13" height="22"/>
         <image name="checked" width="22" height="22"/>
         <image name="ghost" width="114" height="177"/>
@@ -1182,7 +1186,6 @@ install more apps.</string>
         <image name="reviewTrashIllustration" width="96" height="128"/>
         <image name="select_all_unchecked" width="24" height="24"/>
         <image name="shareIllustration" width="94" height="128"/>
-        <image name="stash_buuble" width="44" height="43"/>
         <image name="success" width="61" height="61"/>
     </resources>
     <inferredMetricsTieBreakers>
