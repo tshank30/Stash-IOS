@@ -13,6 +13,7 @@ import Photos
 class RecoverPhotos: NSObject {
         static let albumName = "WhatsApp"
         static let sharedInstance = RecoverPhotos()
+        typealias CompletionHandler = (_ success:Bool, _ changedIdentifier : String) -> Void
         
         var assetCollection: PHAssetCollection!
         
@@ -70,11 +71,11 @@ class RecoverPhotos: NSObject {
             return nil
         }
         
-        func save(image: UIImage) {
+    func save(image: UIImage , identifier : String) -> String? {
             if assetCollection == nil {
-                return                          // if there was an error upstream, skip the save
+                return ""                         // if there was an error upstream, skip the save
             }
-            
+            var localIdentifier = ""
             PHPhotoLibrary.shared().performChanges({
                 let assetChangeRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
                 let assetPlaceHolder = assetChangeRequest.placeholderForCreatedAsset
@@ -82,6 +83,19 @@ class RecoverPhotos: NSObject {
                 let enumeration: NSArray = [assetPlaceHolder!]
                 albumChangeRequest!.addAssets(enumeration)
                 
-            }, completionHandler: nil)
+
+               localIdentifier = (assetPlaceHolder?.localIdentifier)!
+                
+            }, completionHandler: { (success,error) -> Void in
+                
+                if(success && DatabaseManagement.shared.updateRecoveryTransaction(mPath: identifier , identifier : localIdentifier)==true)
+                {
+                    
+                }
+                
+                //let x=assetPlaceHolder?.localIdentifier
+            })
+            
+            return ""
         }
 }

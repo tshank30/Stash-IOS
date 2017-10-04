@@ -133,7 +133,7 @@
                                         <rect key="frame" x="19.666666666666657" y="61" width="375" height="380"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rectangle" translatesAutoresizingMaskIntoConstraints="NO" id="KGl-IW-B1B">
-                                        <rect key="frame" x="70.666666666666686" y="148" width="274" height="205"/>
+                                        <rect key="frame" x="70.666666666666686" y="148.66666666666669" width="274" height="205.00000000000006"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ghost" translatesAutoresizingMaskIntoConstraints="NO" id="s4M-19-XQY">
                                         <rect key="frame" x="310.33333333333337" y="163" width="114" height="177"/>
@@ -142,7 +142,7 @@
                                         </constraints>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rgJ-ej-vCL">
-                                        <rect key="frame" x="131.66666666666666" y="185.33333333333337" width="151.99999999999997" height="130.66666666666663"/>
+                                        <rect key="frame" x="131.66666666666666" y="185.66666666666669" width="151.99999999999997" height="130.66666666666669"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="212" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QRa-Kg-ROa">
                                                 <rect key="frame" x="0.0" y="0.0" width="152" height="107.66666666666666"/>
@@ -180,9 +180,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KbJ-WN-xdM">
-                                <rect key="frame" x="82" y="636" width="250" height="50"/>
+                                <rect key="frame" x="124.66666666666669" y="636" width="165" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="250" id="dcv-9g-Xa0"/>
                                     <constraint firstAttribute="height" constant="50" id="uEl-1P-pJv"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>

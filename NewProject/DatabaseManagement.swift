@@ -16,6 +16,7 @@ class DatabaseManagement
     private let  TAG = "DbUpdate";
     public  let IMAGES_TB = "Images";
     public  let PATH = Expression<String>("Path");
+    public  let IMAGE_PATH = Expression<String>("ImagePath");
     public  let RESPONSE_STATUS = Expression<String>("ResponseStatus");
     public  let ACTION_STATUS = Expression<String>("ActionStatus");
     public  let FILE_SIZE = Expression<String>("FileSize");
@@ -55,6 +56,7 @@ class DatabaseManagement
         do{
             try db?.run((images?.create(ifNotExists: true) { t in     // CREATE TABLE "users" (
                 t.column(PATH) //     "id" INTEGER PRIMARY KEY NOT NULL,
+                t.column(IMAGE_PATH)
                 t.column(RESPONSE_STATUS)  //     "email" TEXT UNIQUE NOT NULL,
                 t.column(ACTION_STATUS)
                 t.column(FILE_SIZE)
@@ -73,6 +75,27 @@ class DatabaseManagement
         }
     }
     
+    func isPathPresent(mPath: String) -> Bool
+    {
+        do
+        {
+            let contact = self.images?.filter(IMAGE_PATH == mPath)
+            //db!.run(contact?.count)
+            for user in try (db?.prepare(contact!))! {
+                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
+                // id: 1, name: Optional("Alice"), email: alice@mac.com
+                return true
+            }
+            
+        }catch{
+            print("Image already present in DB")
+            return false
+        }
+        
+        return false
+    }
+
+    
     func isPresent(mPath: String) -> Bool
     {
         do
@@ -82,7 +105,7 @@ class DatabaseManagement
             for user in try (db?.prepare(contact!))! {
                 print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
                 // id: 1, name: Optional("Alice"), email: alice@mac.com
-                 return true
+                return true
             }
             
         }catch{
@@ -99,7 +122,7 @@ class DatabaseManagement
     {
         if(isPresent(mPath: img.getPath().path)==false)
         {
-            let query = images?.insert(self.PATH <- img.getPath().path, self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
+            let query = images?.insert(self.IMAGE_PATH <- img.getPath().path, self.PATH <- img.getPath().path, self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
             do{
                 let rowid = try db?.run(query!)
                 print(rowid ?? "" ," Row insertion")
@@ -119,7 +142,7 @@ class DatabaseManagement
     {
         if(isPresent(mPath: img.getIdentifier())==false)
         {
-            let query = images?.insert(self.PATH <- img.getIdentifier(), self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "\(img.getActionStatus())",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
+            let query = images?.insert(self.IMAGE_PATH <- img.getPath().path, self.PATH <- img.getIdentifier(), self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "\(img.getActionStatus())",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
             do{
                 let rowid = try db?.run(query!)
                 print(rowid ?? "" ," Row insertion")
@@ -157,6 +180,29 @@ class DatabaseManagement
         }
         return false
     }
+    
+    func updateImageInDBUsingPath(mPath: String,responseStatus : String, actionStatus : String) -> Bool
+    {
+        do
+        {
+            let contact = self.images?.filter(PATH == mPath)
+            //db!.run(contact?.count)
+            
+            try db?.run((contact?.update(RESPONSE_STATUS <- responseStatus,ACTION_STATUS <- actionStatus))!)
+            return true
+            /* for user in try (db?.prepare(contact!))! {
+             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
+             // id: 1, name: Optional("Alice"), email: alice@mac.com
+             return true
+             }*/
+            
+        }catch{
+            print("Error updating the status")
+            return false
+        }
+        return false
+    }
+    
     
     func isScanned(mPath: String) -> Bool
     {
@@ -441,14 +487,14 @@ class DatabaseManagement
     }
     
     
-    func updateRecoveryTransaction(mPath: String) -> Bool
+    func updateRecoveryTransaction(mPath: String , identifier : String) -> Bool
     {
         do
         {
             let contact = self.images?.filter(PATH == mPath)
             //db!.run(contact?.count)
             
-            try db?.run((contact?.update(RESPONSE_STATUS <- "3"))!)
+            try db?.run((contact?.update(RESPONSE_STATUS <- "3", PATH <- identifier))!)
             return true
             /* for user in try (db?.prepare(contact!))! {
              print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")

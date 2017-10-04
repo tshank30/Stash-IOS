@@ -160,7 +160,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 
     
     override func viewDidAppear(_ animated: Bool) {
-         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
+         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenName)
     }
     
     @IBOutlet weak var collectionView: UICollectionView!

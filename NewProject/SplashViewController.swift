@@ -31,6 +31,10 @@ class SplashViewController: UIViewController {
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.runCount, custDimVal: Preferences.shared.setRunCountPreference())
        
         
+       
+        
+        
+        
 //        let content = UNMutableNotificationContent()
 //        content.title = "Don't forget"
 //        content.body = "Buy some milk"
@@ -87,8 +91,24 @@ class SplashViewController: UIViewController {
         queue = OperationQueue()
         queue?.maxConcurrentOperationCount = 1;
         
-        self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
         
+        
+        
+        let urlWhats = "whatsapp://send?phone=+918826756265&abid=12354&text=Hello"
+        if let urlString = urlWhats.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
+            if let whatsappURL = URL(string: urlString) {
+                if UIApplication.shared.canOpenURL(whatsappURL) {
+                    //UIApplication.shared.openURL(whatsappURL)
+                    //UIApplication.shared.open(whatsappURL as URL, options: [:], completionHandler: nil)
+                    self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
+                    
+                } else {
+                    
+                    self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
+                    print("Install Whatsapp")
+                }
+            }
+        }
         
 
     }
@@ -114,6 +134,7 @@ class SplashViewController: UIViewController {
     
     func getAssetsFromAlbum(albumName: String) -> [PHAsset] {
         
+        var fetchAll=false
         let options = PHFetchOptions()
         // Bug from Apple since 9.1, use workaround
         //options.predicate = NSPredicate(format: "title = %@", albumName)
@@ -124,7 +145,10 @@ class SplashViewController: UIViewController {
         var j=0
         var openView=true
         
-        
+        if(albumName != "WhatsApp")
+        {
+            fetchAll=true
+        }
         let myOpQueue = OperationQueue()
         myOpQueue.maxConcurrentOperationCount = 4
 
@@ -133,7 +157,7 @@ class SplashViewController: UIViewController {
         
         for k in 0 ..< collection.count {
             let obj:AnyObject! = collection.object(at: k)
-            if obj.title == albumName {
+            if (obj.title == albumName  || fetchAll ) {
                 if let assCollection = obj as? PHAssetCollection {
                     let results = PHAsset.fetchAssets(in: assCollection, options: options)
                     var assets = [PHAsset]()
@@ -158,30 +182,23 @@ class SplashViewController: UIViewController {
                                             img.setChecked(checked: false)
                                             img.setResponseStatus(mResponseStatus: 0)
                                             img.setActionStatus(status: 0)
-                                            
+                                        
+                                             // self.images?.append(img)
+                                        
+                                             //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
                                             print("total images in DB ",self.images?.count ?? "nothing in DB")
                                             DatabaseManagement.shared.insertImageWithIdentifier(img: img)
                                             
                                             if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
                                             {
-                                                
-                                                    self.myGroup.enter()
-                                            
+                                                self.myGroup.enter()
                                                 myOpQueue.addOperation{
                                                 
                                                     self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier())
                                                 
                                                 }
-                                                
-                                    
-                                                
                                             }
-                                            
-                                            
-                                            
-                                            //self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
-                                            /*let overlayImage = self.faceOverlayImageFromImage(self.image)*/
-                                            
+                                        
                                             DispatchQueue.main.async { // 2
                                                 //self.fadeInNewImage(overlayImage) // 3
                                                 print("Total Photos",  self.asset?.count ?? "No Photos in whatsapp")
@@ -191,19 +208,13 @@ class SplashViewController: UIViewController {
                                                 {
                                                     openView=false
                                                     self.dismiss(animated: true, completion: nil)
-                                                    
                                                     self.performSegue(withIdentifier: "HomeScreen", sender: nil)
-                                             
                                                     
                                                 }
-                                               
-                                                
-                                                
+   
                                             }
                                         }
-                                        
-                                       
-                                    }
+                                }
                                 }
                                 
                             }
@@ -213,7 +224,7 @@ class SplashViewController: UIViewController {
                     
                    myGroup.notify(queue: .main) {
                         print("Finished all requests.")
-                    }
+                }
 
                     //initalaizeUrls(assets: assets)
                     return assets

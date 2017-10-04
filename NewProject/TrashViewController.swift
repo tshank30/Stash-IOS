@@ -20,6 +20,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
     var yourCellInterItemSpacing : CGFloat?
     var deletionMap = [String: String]()
     
+    
     @IBOutlet weak var restoreBtn: UIButton!
     @IBOutlet weak var deletePermanently: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -69,12 +70,12 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         {
             print("file://\(imagePath)")
             let imageLocation = "file://\(imagePath)"
-            RecoverPhotos.sharedInstance.save(image: getImageFromPath(imageUrlPath: imageLocation))
+            RecoverPhotos.sharedInstance.save(image: getImageFromPath(imageUrlPath: imageLocation), identifier : deletionMap[imagePath]! )
             self.deleteFolderContent(folderPath: URL(string: imageLocation)!)
-            if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
-            {
-                
-            }
+//            if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
+//            {
+//
+//            }
             
         }
         

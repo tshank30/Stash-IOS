@@ -180,7 +180,6 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     override func viewDidAppear(_ animated: Bool) {
         
         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
-        
         junkNumber.text=String(DatabaseManagement.shared.getContacts().count)
         
     }
