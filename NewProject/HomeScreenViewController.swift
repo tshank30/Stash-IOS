@@ -13,6 +13,9 @@ import SwiftyGif
 class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VCFinalDelegate, ReviewDelegate, FinalDelegate  {
     
     
+    @IBOutlet weak var gifImageView: UIImageView!
+    @IBOutlet weak var scanningView: UIStackView!
+    @IBOutlet weak var junkFoundView: UIStackView!
     @IBOutlet weak var ghost: UIImageView!
     @IBOutlet weak var junkNumber: UILabel!
     @IBOutlet var homeBackground: UIView!
@@ -94,24 +97,12 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         
         scanBtn.backgroundColor = UIColor.white
         scanBtn.layer.cornerRadius = 25
+        
         scanBtn.layer.borderWidth = 1
         scanBtn.layer.borderColor = UIColor.white.cgColor
         scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         
-        
-        let gifManager = SwiftyGifManager(memoryLimit:20)
-        let gif = UIImage(gifName: "loading_gif")
-        let imageview = UIImageView(gifImage: gif, manager: gifManager)
-        imageview.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: (self.homeBackground.frame.size.height-40.0)/2, width: 40.0, height: 40.0)
-        
-        imageview.frame = CGRect(x: self.view.frame.size.width - imageview.frame.size.width - 5,y: 0 , width:imageview.frame.size.width, height: imageview.frame.size.height)
-        
-        
-        view.addSubview(imageview)
-//        let jeremyGif = UIImage.gifImageWithName("bars")
-//        let imageView = UIImageView(image: jeremyGif)
-//        imageView.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: 10, width: 40.0, height: 40.0)
-//        view.addSubview(imageView)
+    
         
         let dateFormatter = DateFormatter()
         let requestedComponent: Set<Calendar.Component> = [.year,.month,.day,.hour,.minute,.second]
@@ -175,13 +166,51 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
              GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal:  Preferences.shared.setDayCountDimension())
         }
         
+        
+        let junkCount=DatabaseManagement.shared.getContacts().count
+        
+        if(junkCount==0)
+        {
+            junkFoundView.isHidden=true
+            scanningView.isHidden=false
+            
+            let gifManager = SwiftyGifManager(memoryLimit:20)
+            let gif = UIImage(gifName: "loading_gif")
+            self.gifImageView.setGifImage(gif, manager: gifManager)
+            
+            
+        }
+        else
+        {
+            junkFoundView.isHidden=false
+            scanningView.isHidden=true
+            junkNumber.text=String(junkCount)
+        }
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        let junkCount=DatabaseManagement.shared.getContacts().count
         
+        if(junkCount==0)
+        {
+            junkFoundView.isHidden=true
+            scanningView.isHidden=false
+            
+            let gifManager = SwiftyGifManager(memoryLimit:20)
+            let gif = UIImage(gifName: "loading_gif")
+            self.gifImageView.setGifImage(gif, manager: gifManager)
+            
+            
+        }
+        else
+        {
+            junkFoundView.isHidden=false
+            scanningView.isHidden=true
+            junkNumber.text=String(junkCount)
+        }
         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
-        junkNumber.text=String(DatabaseManagement.shared.getContacts().count)
-        
     }
 
     override func didReceiveMemoryWarning() {

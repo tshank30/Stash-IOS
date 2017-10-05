@@ -133,7 +133,7 @@
                                         <rect key="frame" x="19.666666666666657" y="61" width="375" height="380"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rectangle" translatesAutoresizingMaskIntoConstraints="NO" id="KGl-IW-B1B">
-                                        <rect key="frame" x="70.666666666666686" y="148.66666666666669" width="274" height="205.00000000000006"/>
+                                        <rect key="frame" x="69.666666666666686" y="149" width="274" height="205"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ghost" translatesAutoresizingMaskIntoConstraints="NO" id="s4M-19-XQY">
                                         <rect key="frame" x="310.33333333333337" y="163" width="114" height="177"/>
@@ -141,8 +141,25 @@
                                             <constraint firstAttribute="width" secondItem="s4M-19-XQY" secondAttribute="height" multiplier="38:59" id="sfa-Hl-M1c"/>
                                         </constraints>
                                     </imageView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rgJ-ej-vCL">
-                                        <rect key="frame" x="131.66666666666666" y="185.66666666666669" width="151.99999999999997" height="130.66666666666669"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="pcf-w4-sJ9" userLabel="scanning_view">
+                                        <rect key="frame" x="106.66666666666669" y="210" width="200" height="83"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OHA-iS-CH6">
+                                                <rect key="frame" x="0.0" y="0.0" width="200" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="KmA-Fs-ZWO"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning Images" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xnk-0Y-zXZ">
+                                                <rect key="frame" x="0.0" y="60" width="200" height="23"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rgJ-ej-vCL" userLabel="junk_found">
+                                        <rect key="frame" x="130.66666666666666" y="185.66666666666669" width="151.99999999999997" height="130.66666666666669"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="212" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QRa-Kg-ROa">
                                                 <rect key="frame" x="0.0" y="0.0" width="152" height="107.66666666666666"/>
@@ -161,11 +178,13 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="rgJ-ej-vCL" firstAttribute="centerY" secondItem="Cyp-ym-Rvr" secondAttribute="centerY" id="3Y3-oT-lex"/>
+                                    <constraint firstItem="pcf-w4-sJ9" firstAttribute="centerX" secondItem="Cyp-ym-Rvr" secondAttribute="centerX" id="87G-gS-4jg"/>
                                     <constraint firstItem="s4M-19-XQY" firstAttribute="centerY" secondItem="Cyp-ym-Rvr" secondAttribute="centerY" id="Cxo-0l-jrh"/>
                                     <constraint firstItem="gEH-M1-EqK" firstAttribute="centerY" secondItem="Cyp-ym-Rvr" secondAttribute="centerY" id="Ye7-jN-w13"/>
                                     <constraint firstItem="rgJ-ej-vCL" firstAttribute="centerX" secondItem="Cyp-ym-Rvr" secondAttribute="centerX" id="epG-mE-zLZ"/>
-                                    <constraint firstItem="rgJ-ej-vCL" firstAttribute="centerX" secondItem="KGl-IW-B1B" secondAttribute="centerX" id="s45-cm-lRz"/>
+                                    <constraint firstItem="KGl-IW-B1B" firstAttribute="centerX" secondItem="Cyp-ym-Rvr" secondAttribute="centerX" id="jga-ix-xlW"/>
                                     <constraint firstItem="rgJ-ej-vCL" firstAttribute="centerY" secondItem="KGl-IW-B1B" secondAttribute="centerY" id="v2d-jC-AEc"/>
+                                    <constraint firstItem="pcf-w4-sJ9" firstAttribute="centerY" secondItem="Cyp-ym-Rvr" secondAttribute="centerY" id="v3k-Ir-ePx"/>
                                     <constraint firstItem="gEH-M1-EqK" firstAttribute="centerX" secondItem="Cyp-ym-Rvr" secondAttribute="centerX" id="xCH-2y-xnl"/>
                                     <constraint firstAttribute="trailing" secondItem="s4M-19-XQY" secondAttribute="trailing" constant="-10" id="xoS-Ze-QP6"/>
                                 </constraints>
@@ -180,8 +199,9 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KbJ-WN-xdM">
-                                <rect key="frame" x="124.66666666666669" y="636" width="165" height="50"/>
+                                <rect key="frame" x="89.666666666666686" y="636" width="235" height="50"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="235" id="HXr-9O-PJF"/>
                                     <constraint firstAttribute="height" constant="50" id="uEl-1P-pJv"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
@@ -233,9 +253,12 @@
                     </navigationItem>
                     <connections>
                         <outlet property="ghost" destination="s4M-19-XQY" id="Dgr-7l-KZc"/>
+                        <outlet property="gifImageView" destination="OHA-iS-CH6" id="9kM-nk-gZe"/>
                         <outlet property="homeBackground" destination="JeP-db-S8F" id="fIG-ML-b2p"/>
+                        <outlet property="junkFoundView" destination="rgJ-ej-vCL" id="2A8-dx-yXM"/>
                         <outlet property="junkNumber" destination="QRa-Kg-ROa" id="s9C-nq-6Bw"/>
                         <outlet property="scanBtn" destination="KbJ-WN-xdM" id="sud-CS-VoW"/>
+                        <outlet property="scanningView" destination="pcf-w4-sJ9" id="rxI-da-Y93"/>
                         <segue destination="foz-SV-KoF" kind="show" identifier="HomeToScanning" id="kld-VN-96t"/>
                         <segue destination="fAZ-Rw-rd2" kind="show" identifier="HomeToReview" id="ePB-FW-Zvr"/>
                         <segue destination="OAB-th-rhO" kind="show" identifier="HomeToDeletionProgress" id="A8q-gE-XdL"/>

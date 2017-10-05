@@ -83,8 +83,10 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.imagesRestore, label: "\(String(describing: deletionSet?.count))")
         
-        dataModel=getData()
-        collectionView.reloadData()
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+        self.dataModel=self.getData()
+        self.collectionView.reloadData()
+        })
        // self.navigationController?.popViewController(animated: true)
        // self.dismiss(animated: true, completion: nil)
 
