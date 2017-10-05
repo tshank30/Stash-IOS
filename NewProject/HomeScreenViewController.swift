@@ -169,16 +169,14 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         
         let junkCount=DatabaseManagement.shared.getContacts().count
         
+        let gifManager = SwiftyGifManager(memoryLimit:20)
+        let gif = UIImage(gifName: "loading_gif")
+        self.gifImageView.setGifImage(gif, manager: gifManager)
+        
         if(junkCount==0)
         {
             junkFoundView.isHidden=true
             scanningView.isHidden=false
-            
-            let gifManager = SwiftyGifManager(memoryLimit:20)
-            let gif = UIImage(gifName: "loading_gif")
-            self.gifImageView.setGifImage(gif, manager: gifManager)
-            
-            
         }
         else
         {
@@ -197,12 +195,6 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         {
             junkFoundView.isHidden=true
             scanningView.isHidden=false
-            
-            let gifManager = SwiftyGifManager(memoryLimit:20)
-            let gif = UIImage(gifName: "loading_gif")
-            self.gifImageView.setGifImage(gif, manager: gifManager)
-            
-            
         }
         else
         {
