@@ -154,7 +154,8 @@ class SplashViewController: UIViewController {
 
         semaphore = DispatchSemaphore(value: 0) // DispatchSemaphore(value: 0)
         
-        
+        if( collection.count > 0)
+        {
         for k in 0 ..< collection.count {
             let obj:AnyObject! = collection.object(at: k)
             if (obj.title == albumName  || fetchAll ) {
@@ -227,10 +228,17 @@ class SplashViewController: UIViewController {
                 }
 
                     //initalaizeUrls(assets: assets)
+                    print("returning asset")
                     return assets
                 }
             }
         }
+        }
+        else{
+            self.dismiss(animated: true, completion: nil)
+            self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+        }
+         print("returning emmty asset")
         return [PHAsset]()
     }
     

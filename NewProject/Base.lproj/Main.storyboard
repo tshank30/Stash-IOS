@@ -257,6 +257,7 @@
                         <outlet property="homeBackground" destination="JeP-db-S8F" id="fIG-ML-b2p"/>
                         <outlet property="junkFoundView" destination="rgJ-ej-vCL" id="2A8-dx-yXM"/>
                         <outlet property="junkNumber" destination="QRa-Kg-ROa" id="s9C-nq-6Bw"/>
+                        <outlet property="junkPhotoFound" destination="T6R-YE-9Dm" id="hZ1-yX-rV3"/>
                         <outlet property="scanBtn" destination="KbJ-WN-xdM" id="sud-CS-VoW"/>
                         <outlet property="scanningView" destination="pcf-w4-sJ9" id="rxI-da-Y93"/>
                         <segue destination="foz-SV-KoF" kind="show" identifier="HomeToScanning" id="kld-VN-96t"/>

@@ -23,12 +23,21 @@ class ScanningViewController: UIViewController {
 
         super.viewDidLoad()
         
+        let totalImages = DatabaseManagement.shared.getTotalImageCount()
+        
         navigationItem.hidesBackButton = true
         navigationController?.navigationBar.isUserInteractionEnabled = false
         
-        scanningText.text = "Scanning \(DatabaseManagement.shared.getScannedImages())/\(DatabaseManagement.shared.getTotalImageCount())"
-
-        progress.progress=Float(DatabaseManagement.shared.getScannedImages()*100/DatabaseManagement.shared.getTotalImageCount())
+        if(totalImages != 0)
+        {
+        scanningText.text = "Scanning \(DatabaseManagement.shared.getScannedImages())/\(totalImages)"
+        self.progress.setProgress(Float(DatabaseManagement.shared.getScannedImages()*100/totalImages), animated: false)
+        }
+        else{
+            scanningText.text = "Scanning 0 images"
+            self.progress.setProgress(0,animated: false)
+        }
+        //progress.progress=Float(DatabaseManagement.shared.getScannedImages()*100/DatabaseManagement.shared.getTotalImageCount())
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: {            
             

@@ -1002,11 +1002,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ScanningViewController.swift"
-            timestampString = "528820157.225784"
+            timestampString = "528982389.961719"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1034,13 +1034,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528820476.835433"
+            timestampString = "528982389.961919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "554"
-            endingLineNumber = "554"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "562"
+            endingLineNumber = "562"
+            landmarkName = "performDeletionAfterTenDays()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1050,11 +1050,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/HomeScreenViewController.swift"
-            timestampString = "528895811.396168"
+            timestampString = "528982389.96204"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1098,13 +1098,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528820476.835659"
+            timestampString = "528982389.963016"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "333"
+            endingLineNumber = "333"
+            landmarkName = "alertToEncouragePhotoLibraryAccessWhenApplicationStarts()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1146,7 +1146,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528816189.337532"
+                  timestampString = "528975105.537529"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1161,7 +1161,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528816189.339678"
+                  timestampString = "528975105.540349"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1176,7 +1176,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528816189.341622"
+                  timestampString = "528975105.541843"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "11"
@@ -1191,7 +1191,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528816189.344065"
+                  timestampString = "528975105.543629"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1206,7 +1206,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528816189.346984"
+                  timestampString = "528975105.545562"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "11"
@@ -1219,23 +1219,23 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528820476.835797"
+            timestampString = "528982389.963192"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/DatabaseManagement.swift"
@@ -1251,7 +1251,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/DatabaseManagement.swift"
@@ -1262,6 +1262,182 @@
             endingLineNumber = "156"
             landmarkName = "insertImageWithIdentifier(img:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "528982389.963401"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "528982389.963517"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "528982389.963627"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975105.553624"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "225"
+                  endingLineNumber = "225"
+                  offsetFromSymbolStart = "3972">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975105.555068"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "226"
+                  endingLineNumber = "226"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "528982389.963733"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975105.558353"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "165"
+                  endingLineNumber = "165"
+                  offsetFromSymbolStart = "3708">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__ObjC.PHAsset, Swift.Int, Swift.UnsafeMutablePointer&lt;ObjectiveC.ObjCBool&gt;) -&gt; () in NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975105.559781"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "163"
+                  endingLineNumber = "163"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "528982389.963837"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "getAssetsFromAlbum(albumName:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__ObjC.PHContentEditingInput&gt;, Swift.Dictionary&lt;Swift.AnyHashable, Any&gt;) -&gt; () in closure #1 (__ObjC.PHAsset, Swift.Int, Swift.UnsafeMutablePointer&lt;ObjectiveC.ObjCBool&gt;) -&gt; () in NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975129.459988"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "202"
+                  endingLineNumber = "202"
+                  offsetFromSymbolStart = "2016">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 (Swift.Optional&lt;__ObjC.PHContentEditingInput&gt;, Swift.Dictionary&lt;Swift.AnyHashable, Any&gt;) -&gt; () in closure #1 (__ObjC.PHAsset, Swift.Int, Swift.UnsafeMutablePointer&lt;ObjectiveC.ObjCBool&gt;) -&gt; () in NewProject.SplashViewController.getAssetsFromAlbum(albumName: Swift.String) -&gt; Swift.Array&lt;__ObjC.PHAsset&gt;"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "528975129.462754"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "145"
+                  endingLineNumber = "145"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

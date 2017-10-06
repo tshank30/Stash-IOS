@@ -14,6 +14,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     
     @IBOutlet weak var gifImageView: UIImageView!
+    @IBOutlet weak var junkPhotoFound: UILabel!
     @IBOutlet weak var scanningView: UIStackView!
     @IBOutlet weak var junkFoundView: UIStackView!
     @IBOutlet weak var ghost: UIImageView!
@@ -22,6 +23,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     @IBOutlet weak var resultsLabel: UILabel!
     var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     var resultMessage : String?
+    var totalImages=0
 
     @IBOutlet weak var scanBtn: UIButton!
     @IBOutlet weak var photoImageView: UIImageView!
@@ -95,12 +97,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         junkNumber.text=String(DatabaseManagement.shared.getContacts().count)
         
         
-        scanBtn.backgroundColor = UIColor.white
-        scanBtn.layer.cornerRadius = 25
         
-        scanBtn.layer.borderWidth = 1
-        scanBtn.layer.borderColor = UIColor.white.cgColor
-        scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         
     
         
@@ -173,16 +170,51 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         let gif = UIImage(gifName: "loading_gif")
         self.gifImageView.setGifImage(gif, manager: gifManager)
         
-        if(junkCount==0)
+        totalImages = DatabaseManagement.shared.getTotalImageCount()
+        
+        
+        if(totalImages==0)
+        {
+            junkFoundView.isHidden=false
+            scanningView.isHidden=true
+            junkNumber.text="NO"
+            junkPhotoFound.text = "PHOTOS FOUND"
+            scanBtn.isEnabled=false
+            
+            scanBtn.backgroundColor = UIColor.gray
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.gray.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+        }
+        else if(junkCount==0)
         {
             junkFoundView.isHidden=true
             scanningView.isHidden=false
+            scanBtn.isEnabled=false
+            
+            scanBtn.backgroundColor = UIColor.gray
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.gray.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         }
         else
         {
             junkFoundView.isHidden=false
             scanningView.isHidden=true
             junkNumber.text=String(junkCount)
+            junkPhotoFound.text = "JUNK FOUND"
+             scanBtn.isEnabled=true
+            
+            scanBtn.backgroundColor = UIColor.white
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.white.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         }
         
         
@@ -191,16 +223,48 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     override func viewDidAppear(_ animated: Bool) {
         let junkCount=DatabaseManagement.shared.getContacts().count
         
-        if(junkCount==0)
+        if(totalImages==0)
+        {
+            junkFoundView.isHidden=false
+            scanningView.isHidden=true
+            junkNumber.text="NO"
+            junkPhotoFound.text = "PHOTOS FOUND"
+            scanBtn.isEnabled=false
+            
+            scanBtn.backgroundColor = UIColor.gray
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.gray.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+        }
+        else if(junkCount==0)
         {
             junkFoundView.isHidden=true
             scanningView.isHidden=false
+            scanBtn.isEnabled=false
+            scanBtn.backgroundColor = UIColor.gray
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.gray.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         }
         else
         {
             junkFoundView.isHidden=false
             scanningView.isHidden=true
             junkNumber.text=String(junkCount)
+            junkPhotoFound.text = "JUNK FOUND"
+            scanBtn.isEnabled=true
+            
+            scanBtn.backgroundColor = UIColor.white
+            scanBtn.layer.cornerRadius = 25
+            
+            scanBtn.layer.borderWidth = 1
+            scanBtn.layer.borderColor = UIColor.white.cgColor
+            scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+            
         }
         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
     }
