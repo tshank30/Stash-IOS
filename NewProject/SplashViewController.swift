@@ -362,6 +362,7 @@ class SplashViewController: UIViewController {
     func UploadRequest(image : UIImage, mPath : String)     {
         var url : NSURL?
        
+//        url = NSURL(string:"http://172.26.81.102:8002/")
         if(self.request==0)
         {
              url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
@@ -443,6 +444,7 @@ class SplashViewController: UIViewController {
                 print(error.debugDescription+"error")
                 return
             }
+            
             
             let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
             print(dataString ?? "No Data")
