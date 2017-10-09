@@ -714,7 +714,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.395789"
+            timestampString = "529249978.951331"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
@@ -762,7 +762,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.395854"
+            timestampString = "529249978.951507"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "455"
@@ -778,7 +778,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.395901"
+            timestampString = "529249978.951613"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "466"
@@ -794,7 +794,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.395945"
+            timestampString = "529249978.951689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "468"
@@ -810,7 +810,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.395985"
+            timestampString = "529249978.951761"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "462"
@@ -970,7 +970,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.39608"
+            timestampString = "529249978.951949"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "20"
@@ -1002,7 +1002,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ScanningViewController.swift"
-            timestampString = "528992481.096659"
+            timestampString = "528994255.821751"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "47"
@@ -1034,11 +1034,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.096738"
+            timestampString = "529249978.952095"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "564"
-            endingLineNumber = "564"
+            startingLineNumber = "573"
+            endingLineNumber = "573"
             landmarkName = "performDeletionAfterTenDays()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1050,11 +1050,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/HomeScreenViewController.swift"
-            timestampString = "528992481.097196"
+            timestampString = "529249978.952206"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1066,11 +1066,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.396707"
+            timestampString = "529249978.953387"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1082,11 +1082,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/ReviewViewController.swift"
-            timestampString = "528895811.396754"
+            timestampString = "529249978.953516"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1098,7 +1098,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.097279"
+            timestampString = "529249978.953623"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "333"
@@ -1146,7 +1146,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528992135.601707"
+                  timestampString = "529249979.142456"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1161,7 +1161,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528992135.603885"
+                  timestampString = "529249979.14407"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1176,7 +1176,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528992135.60547"
+                  timestampString = "529249979.146133"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "11"
@@ -1191,7 +1191,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528992135.608084"
+                  timestampString = "529249979.148356"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
@@ -1206,7 +1206,7 @@
                   moduleName = "NewProject"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/ViewController.swift"
-                  timestampString = "528992135.611978"
+                  timestampString = "529249979.150721"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "11"
@@ -1223,7 +1223,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.09765"
+            timestampString = "529249978.953822"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "183"
@@ -1271,7 +1271,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.09804"
+            timestampString = "529249978.954021"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "232"
@@ -1287,7 +1287,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.098447"
+            timestampString = "529249978.954133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "228"
@@ -1303,7 +1303,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.098888"
+            timestampString = "529249978.954252"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "226"
@@ -1351,7 +1351,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.099537"
+            timestampString = "529249978.954355"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "166"
@@ -1399,7 +1399,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NewProject/SplashViewController.swift"
-            timestampString = "528992481.100163"
+            timestampString = "529249978.954447"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "203"
@@ -1438,6 +1438,182 @@
                   offsetFromSymbolStart = "28">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "529249978.954598"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "455"
+            endingLineNumber = "455"
+            landmarkName = "UploadRequest(image:mPath:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "529249978.954691"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
+            landmarkName = "UploadRequest(image:mPath:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NewProject.SplashViewController.UploadRequest(image: __ObjC.UIImage, mPath: Swift.String) -&gt; ()"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "529235787.408469"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "439"
+                  endingLineNumber = "439"
+                  offsetFromSymbolStart = "6084">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__ObjC.URLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in NewProject.SplashViewController.UploadRequest(image: __ObjC.UIImage, mPath: Swift.String) -&gt; ()"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/SplashViewController.swift"
+                  timestampString = "529235787.411871"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "443"
+                  endingLineNumber = "443"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "529249978.954803"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "448"
+            endingLineNumber = "448"
+            landmarkName = "UploadRequest(image:mPath:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "529249978.954897"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "451"
+            endingLineNumber = "451"
+            landmarkName = "UploadRequest(image:mPath:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/SplashViewController.swift"
+            timestampString = "529249978.954987"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "446"
+            endingLineNumber = "446"
+            landmarkName = "UploadRequest(image:mPath:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/HomeScreenViewController.swift"
+            timestampString = "529249978.95515"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
+            landmarkName = "refreshScreen()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NewProject.HomeScreenViewController.refreshScreen() -&gt; ()"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/HomeScreenViewController.swift"
+                  timestampString = "529249568.192272"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in NewProject.HomeScreenViewController.refreshScreen() -&gt; ()"
+                  moduleName = "NewProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shashanktiwari/Documents/Stash-IOS/NewProject/HomeScreenViewController.swift"
+                  timestampString = "529249568.19373"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewProject/HomeScreenViewController.swift"
+            timestampString = "529249978.956371"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
+            landmarkName = "refreshScreen()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

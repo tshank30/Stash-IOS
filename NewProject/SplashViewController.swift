@@ -362,35 +362,36 @@ class SplashViewController: UIViewController {
     func UploadRequest(image : UIImage, mPath : String)     {
         var url : NSURL?
        
-//        url = NSURL(string:"http://172.26.81.102:8002/")
-        if(self.request==0)
-        {
-             url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
-            self.request=1
-        }
-        else if(self.request==1)
-        {
-             url = NSURL(string: "http://dean96633.pythonanywhere.com/polls/")
-            self.request=2
-        }
-        else if(self.request==2)
-        {
-             url = NSURL(string: "http://akshit92.pythonanywhere.com/")
-            self.request=3
-        }
-        else if(self.request==3)
-        {
-             url = NSURL(string: "http://aki92.pythonanywhere.com/")
-            self.request=0
-        }
+        url = NSURL(string:"http://172.26.81.102:8002/")
+//        if(self.request==0)
+//        {
+//             url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
+//            self.request=1
+//        }
+//        else if(self.request==1)
+//        {
+//             url = NSURL(string: "http://dean96633.pythonanywhere.com/polls/")
+//            self.request=2
+//        }
+//        else if(self.request==2)
+//        {
+//             url = NSURL(string: "http://akshit92.pythonanywhere.com/")
+//            self.request=3
+//        }
+//        else if(self.request==3)
+//        {
+//             url = NSURL(string: "http://aki92.pythonanywhere.com/")
+//            self.request=0
+//        }
         let request = NSMutableURLRequest(url: url! as URL)
         request.httpMethod = "POST"
         
         let boundary = generateBoundaryString()
         
         //define the multipart request type
-        
+       
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
         
         if (image == nil)
         {
@@ -399,6 +400,9 @@ class SplashViewController: UIViewController {
         
         let image_data = UIImagePNGRepresentation(image)
         
+       // print("",image_data?.count)
+        
+        // request.setValue("\(image_data?.count)", forHTTPHeaderField: "Content-Length")
         
         if(image_data == nil)
         {
@@ -435,6 +439,7 @@ class SplashViewController: UIViewController {
         
         let session = URLSession.shared
 
+        session.configuration.timeoutIntervalForRequest = 120
         
         let task = session.dataTask(with: request as URLRequest) {
             (
@@ -442,6 +447,7 @@ class SplashViewController: UIViewController {
             
             guard let _ = data ,let _:NSData = data! as NSData, let _:URLResponse = response, error == nil else {
                 print(error.debugDescription+"error")
+                self.semaphore?.signal()
                 return
             }
             
@@ -474,6 +480,9 @@ class SplashViewController: UIViewController {
         semaphore?.wait()
         
     }
+    
+    
+
     
     
     func generateBoundaryString() -> String

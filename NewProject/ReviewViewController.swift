@@ -39,6 +39,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     var folderPath : URL?
     var refresh = true
     var allSelected = false
+   
     
     
     var image: UIImage!
@@ -230,7 +231,6 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 //            scanningView.isHidden=true
             scanningViewHeightConstraint.constant = 0
         }
-      
         
     }
 

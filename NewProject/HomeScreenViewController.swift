@@ -24,6 +24,8 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     var resultMessage : String?
     var totalImages=0
+    var refresh = true
+    //weak var weakSelf=self
 
     @IBOutlet weak var scanBtn: UIButton!
     @IBOutlet weak var photoImageView: UIImageView!
@@ -95,6 +97,8 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         navigationController?.navigationBar.tintColor = UIColor.white
         
         junkNumber.text=String(DatabaseManagement.shared.getContacts().count)
+        
+        
         
         
         
@@ -217,7 +221,71 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
             scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
         }
         
+        refreshScreen()
         
+    }
+    
+    
+    func refreshScreen()
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
+            let junkCount=DatabaseManagement.shared.getContacts().count
+            
+            if(self.totalImages==0)
+            {
+                self.junkFoundView.isHidden=false
+                self.scanningView.isHidden=true
+                self.junkNumber.text="NO"
+                self.junkPhotoFound.text = "PHOTOS FOUND"
+                self.scanBtn.isEnabled=false
+                
+                self.scanBtn.backgroundColor = UIColor.gray
+                self.scanBtn.layer.cornerRadius = 25
+                
+                self.scanBtn.layer.borderWidth = 1
+                self.scanBtn.layer.borderColor = UIColor.gray.cgColor
+                self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+            }
+            else if(junkCount==0)
+            {
+                self.junkFoundView.isHidden=true
+                self.scanningView.isHidden=false
+                self.scanBtn.isEnabled=false
+                self.scanBtn.backgroundColor = UIColor.gray
+                self.scanBtn.layer.cornerRadius = 25
+                
+                self.scanBtn.layer.borderWidth = 1
+                self.scanBtn.layer.borderColor = UIColor.gray.cgColor
+                self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+            }
+            else
+            {
+                self.junkFoundView.isHidden=false
+                self.scanningView.isHidden=true
+                self.junkNumber.text=String(junkCount)
+                self.junkPhotoFound.text = "JUNK FOUND"
+                self.scanBtn.isEnabled=true
+                
+                self.scanBtn.backgroundColor = UIColor.white
+                self.scanBtn.layer.cornerRadius = 25
+                
+                self.scanBtn.layer.borderWidth = 1
+                self.scanBtn.layer.borderColor = UIColor.white.cgColor
+                self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+                
+            }
+            if(DatabaseManagement.shared.getScannedImages()==DatabaseManagement.shared.getTotalImageCount())
+            {
+                self.refresh=false
+                //self.scanningViewHeightConstraint.constant = 0
+                //self.scanningView.isHidden=true
+            }
+            
+            if(self.refresh==true)
+            {
+                self.refreshScreen()
+            }
+        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -272,6 +340,10 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        refresh=false
     }
     
     
