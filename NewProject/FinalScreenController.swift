@@ -107,9 +107,9 @@ class FinalScreenController: UIViewController {
         
          GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.share, label: "")
         
-        let textToShare = "Swift is awesome!  Check out this website about it!"
+        let textToShare = "Hey, hi! you know I just tried out an app that lets you Clean Junk Whatsapp Images. So no need of manually searching Good Morning/Good Night photos anymore Try it! I think you'll find it useful"
         
-        if let myWebsite = NSURL(string: "http://www.codingexplorer.com/") {
+        if let myWebsite = NSURL(string: "http://itunes.apple.com/app/id1290150652") {
             let objectsToShare = [textToShare, myWebsite] as [Any]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             
@@ -140,7 +140,7 @@ class FinalScreenController: UIViewController {
     */
     
     func rateApp(appId: String, completion: @escaping ((_ success: Bool)->())) {
-        guard let url = URL(string : "itms-apps://itunes.apple.com/app/" + appId) else {
+        guard let url = URL(string : "http://itunes.apple.com/app/id1290150652") else {
             completion(false)
             return
         }

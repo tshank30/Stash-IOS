@@ -22,7 +22,6 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 
     
     @IBOutlet weak var scanningView: UIView!
-    @IBOutlet weak var selectAllBtn: UIButton!
    // @IBOutlet weak var scanningView: UIView!
     @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
     
@@ -41,6 +40,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     var allSelected = false
    
     
+    @IBOutlet weak var selectAllBtn: UIButton!
     
     var image: UIImage!
     var assetCollection: PHAssetCollection!
@@ -58,13 +58,13 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
 //    d. No of images deleted
 //    e. Total no of images
     
-    
+   
     @IBAction func selectUnselectAll(_ sender: Any) {
         
         selectAll(select: !allSelected)
-        
     }
     
+
     @IBAction func deleteImages(_ sender: Any) {
         
         GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesSelected, label: "\(String(describing: deletionSet?.count))")
@@ -169,12 +169,13 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         super.viewDidLoad()
         
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.reviewScreen, custDimVal: String(describing : Preferences.shared.setReviewScreenPreference))
-       updateTitle()
+        
+        updateHeader()
        // self.navigationBar.topItem.title = "\(deletionSet?.count) Photos Selected"
         
         yourCellInterItemSpacing=2
         
-        //let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is required because UICollectionViewLayout doesn't offer header pin. Its feature of UICollectionViewFlowLayout
+        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is required because UICollectionViewLayout doesn't offer header pin. Its feature of UICollectionViewFlowLayout
         //layout?.sectionHeadersPinToVisibleBounds = true
         
         deletionAsset = [PHAsset]()
@@ -185,6 +186,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         // Register cell classes
         // self.collectionView!.register(CollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         
+//        self.collectionView.register(UINib(nibName: HCollectionReusableView.nibName, bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: HCollectionReusableView.reuseIdentifier)
         //asset=getAssetsFromAlbum(albumName: "WhatsApp")
         
         deletionSet=[String]()
@@ -221,7 +223,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
              Preferences.shared.setfistTimePreference()
         }
         
-        updateHeader()
+        //updateHeader()
+        
+        updateTitle()
         
         if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
         {
@@ -254,7 +258,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func updateTitle()
     {
-        self.title = "\(deletionSet?.count ?? 0) Photos Selected"
+       self.collectionView.reloadData()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -271,7 +275,8 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             self.newDataModel=self.getData()
             self.selectOrDeselectAll(select: true)
             self.dataModel=self.newDataModel
-            self.updateHeader()
+            //self.updateHeader()
+            self.updateTitle()
             self.collectionView.reloadData()
            
             if(self.deletionSet?.count == self.dataModel?.count)
@@ -303,7 +308,10 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func updateHeader()
     {
-         headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+        
+        //headerText.text = "\(deletionSet?.count ?? 0) Photos Selected"
+        //headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+        self.title = "\(deletionSet?.count ?? 0) Photos Selected"
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -365,6 +373,25 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
      }*/
     
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        switch kind {
+        case UICollectionElementKindSectionHeader:
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath) as! HCollectionReusableView
+            
+            headerView.headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+            //headerView.backgroundColor = UIColor.blue;
+            return headerView
+            
+//        case UICollectionElementKindSectionFooter:
+//            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: indexPath) as! UICollectionReusableView
+//
+//            footerView.backgroundColor = UIColor.gray;
+//            return footerView
+            
+        default:  fatalError("Unexpected element kind")
+        }
+    }
    
     
     // Uncomment this method to specify if the specified item should be selected
@@ -390,6 +417,10 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                 //deletionSet?.append((dataModel?[indexPath.row].getIdentifier())!)
             }
         }
+//        else if let _cell = collectionView.cellForItem(at: indexPath) as? HCollectionReusableView {
+//
+//            _cell.headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+//        }
         
         
        /* PHPhotoLibrary.shared().performChanges({
@@ -398,7 +429,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         }, completionHandler: {success, error in
             print(success ? "Success" : error )
         })*/
-        updateTitle()
+        //updateTitle()
+        updateHeader()
+        
         checkUncheckAllBtn()
         
         print("clicked")
@@ -681,7 +714,8 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         //checkUncheckAllBtn()
         collectionView.reloadData()
-        updateTitle()
+        //updateTitle()
+        updateHeader()
         
     }
 
@@ -715,7 +749,8 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         checkUncheckAllBtn()
         collectionView.reloadData()
-        updateTitle()
+        //updateTitle()
+        updateHeader()
         
     }
 

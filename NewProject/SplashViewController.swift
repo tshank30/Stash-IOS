@@ -154,6 +154,7 @@ class SplashViewController: UIViewController {
 
         semaphore = DispatchSemaphore(value: 0) // DispatchSemaphore(value: 0)
         
+        print("Photo count",collection.count)
         if( collection.count > 0)
         {
         for k in 0 ..< collection.count {
@@ -187,7 +188,7 @@ class SplashViewController: UIViewController {
                                              // self.images?.append(img)
                                         
                                              //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
-                                            print("total images in DB ",self.images?.count ?? "nothing in DB")
+                                            //print("total images in DB ",self.images?.count ?? "nothing in DB")
                                             DatabaseManagement.shared.insertImageWithIdentifier(img: img)
                                             
                                             if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
@@ -195,7 +196,8 @@ class SplashViewController: UIViewController {
                                                 self.myGroup.enter()
                                                 myOpQueue.addOperation{
                                                 
-                                                    self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier())
+                                                    self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: imgURL.lastPathComponent)
+                                                    
                                                 
                                                 }
                                             }
@@ -359,10 +361,10 @@ class SplashViewController: UIViewController {
         
     }
     
-    func UploadRequest(image : UIImage, mPath : String)     {
+    func UploadRequest(image : UIImage, mPath : String, filename :String)     {
         var url : NSURL?
        
-        url = NSURL(string:"http://172.26.81.102:8002/")
+        url = NSURL(string:"http://223.165.30.63:8002/")
 //        if(self.request==0)
 //        {
 //             url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
@@ -412,7 +414,7 @@ class SplashViewController: UIViewController {
         
         let body = NSMutableData()
         
-        let fname = "test.png"
+        let fname = filename
         let mimetype = "image/png"
         let file = "upload_file"
         
@@ -452,22 +454,57 @@ class SplashViewController: UIViewController {
             }
             
             
-            let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-            print(dataString ?? "No Data")
-            
-            let fullNameArr=dataString?.components(separatedBy: " ")
-            if((fullNameArr?.count)!>3)
-            {
-                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
-                print("junk insertion :", result)
+            do {
+                if let tempData = data, let tempJson = try JSONSerialization.jsonObject(with: tempData) as? [String: Any], let tempBlogs = tempJson[filename] as? [Any] {
+                    
+                    print("junktag :",tempBlogs[0])
+                    
+                    let junkTag = tempBlogs[0] as! Int
+                    
+                    if(junkTag == 1)
+                    {
+                        print("Image is Junk")
+                        let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
+                        print("junk insertion :", result)
+                    }
+                    else{
+                        print("Image is not Junk")
+                        let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
+                        print("non junk insertion :", result)
+                    }
+                    
+                    
+                    tempBlogs.forEach({ (item) in
+                        print("\(type(of: item)) Hello App: \(item)")
+                    })
+                }
+                else{
+                    print("nothing")
+                }
                 
-            }
-            else{
-                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
-                print("non junk insertion :", result)
-                
+            } catch {
+                print("Error deserializing JSON: \(error)")
             }
             
+           
+         
+           
+//            var dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+//            print(dataString ?? "No Data")
+//
+//            let fullNameArr=dataString?.components(separatedBy: " ")
+//            if((fullNameArr?.count)!>3)
+//            {
+//                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
+//                print("junk insertion :", result)
+//
+//            }
+//            else{
+//                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
+//                print("non junk insertion :", result)
+//
+//            }
+        
             self.semaphore?.signal()
             //semaphore.wait
             
@@ -481,6 +518,17 @@ class SplashViewController: UIViewController {
         
     }
     
+    
+    func convertToDictionary(text: String) -> [String: Any]? {
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        return nil
+    }
     
 
     
