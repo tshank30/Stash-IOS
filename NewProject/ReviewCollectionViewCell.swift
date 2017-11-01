@@ -32,6 +32,12 @@ class ReviewCollectionViewCell: UICollectionViewCell {
 
     }*/
     
+    override func awakeFromNib() {
+        image.layer.cornerRadius = 8
+        image.clipsToBounds = true
+        image.contentMode = .scaleToFill
+    }
+    
     
     func imageSelection() -> Bool
     {
@@ -53,5 +59,7 @@ class ReviewCollectionViewCell: UICollectionViewCell {
         }
         
     }
+    
+    
     
 }

@@ -12,6 +12,14 @@ class FinalScreenController: UIViewController {
 
     var deletionCount : Int?
     
+    @IBOutlet weak var reviewTrash: UIView!
+    
+    @IBOutlet weak var shareAppView: UIView!
+    
+    @IBOutlet weak var negativeRating: UIButton!
+    @IBOutlet weak var positiveRating: UIButton!
+    @IBOutlet weak var shareApp: UIButton!
+    @IBOutlet weak var viewTrash: UIButton!
     @IBAction func goBack(_ sender: Any) {
         
         self.navigationController?.popViewController(animated: true)
@@ -21,13 +29,15 @@ class FinalScreenController: UIViewController {
     }
     
     
+   
     @IBOutlet weak var ratingView: UIView!
+    
     @IBOutlet weak var headerText: UILabel!
     
+   
+    
     @IBAction func feedbackOnNegativeRating(_ sender: Any) {
-        
         feedBackPopUp()
-        
     }
     
     func feedBackPopUp()
@@ -60,6 +70,8 @@ class FinalScreenController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+
+    
     @IBAction func rateApp(_ sender: Any) {
         rateApp(appId: "id959379869") { success in
             print("RateApp \(success)")
@@ -70,7 +82,6 @@ class FinalScreenController: UIViewController {
             
         }
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -78,12 +89,37 @@ class FinalScreenController: UIViewController {
         
         if(deletionCount == 1)
         {
-            headerText.text = "\(deletionCount!) Photo moved to trash"
+            headerText.text = "\(deletionCount!) Junk Photo Cleaned"
         }else
         {
-            headerText.text = "\(deletionCount!) Photos moved to trash"
+            headerText.text = "\(deletionCount!) Junk Photos Cleaned"
         }
-        // Do any additional setup after loading the view.
+     
+        reviewTrash.layer.cornerRadius = 8
+        shareAppView.layer.cornerRadius = 8
+        ratingView.layer.cornerRadius = 8
+        shareApp.layer.cornerRadius = 15
+        viewTrash.layer.cornerRadius = 15
+        positiveRating.layer.cornerRadius = 15
+        negativeRating.layer.cornerRadius = 15
+        negativeRating.layer.borderWidth = 1
+        negativeRating.layer.borderColor = UIColor.init(red:255/255.0, green:255/255.0, blue:255/255.0, alpha: 1.0).cgColor
+        
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.barTintColor = UIColor.init(red:2/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
+         self.navigationController?.navigationBar.tintColor = UIColor.init(red:255/255.0, green:255/255.0, blue:255/255.0, alpha: 1.0)
+       
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.barTintColor = UIColor.white
+         self.navigationController?.navigationBar.tintColor = UIColor.init(red:2/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
     }
 
     override func didReceiveMemoryWarning() {
@@ -97,12 +133,12 @@ class FinalScreenController: UIViewController {
     }
     
   
-    @IBAction func shareAppFunction(_ sender: Any) {
     
-        shareApp()
+    @IBAction func shareAppFunction(_ sender: Any) {
+        shareAppFunc()
     }
     
-    func shareApp()
+    func shareAppFunc()
     {
         
          GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.share, label: "")
@@ -122,13 +158,13 @@ class FinalScreenController: UIViewController {
         }
     }
   
+  
     @IBAction func FinalToTrashScreen(_ sender: Any) {
-        
         GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.trashBtn, label: "")
         performSegue(withIdentifier: "FinalToTrash", sender: nil)
 
-        
     }
+    
     /*
     // MARK: - Navigation
 

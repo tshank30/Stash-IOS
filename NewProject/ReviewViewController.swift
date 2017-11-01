@@ -18,12 +18,19 @@ protocol ReviewDelegate {
 }
 
 
-class ReviewViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
-
+class ReviewViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate,VCImageZoomDelegate {
     
-    @IBOutlet weak var scanningView: UIView!
-   // @IBOutlet weak var scanningView: UIView!
+    
+    @IBOutlet weak var deleteBtn: UIButton!
+    @IBOutlet weak var scanningView : UIView!
+    // @IBOutlet weak var scanningView: UIView!
     @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
+    
+    var scanningOn : Bool = false
+    var photoZoomIdentifier : String!
+    var photoZoomPosition : Int!
+    var photoZoomSelected : Bool!
+    @IBOutlet weak var selectedText: UIButton!
     
     @IBOutlet weak var headerText: UILabel!
     typealias CompletionHandler = (_ success:Bool) -> Void
@@ -38,7 +45,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     var folderPath : URL?
     var refresh = true
     var allSelected = false
-   
+    
     
     @IBOutlet weak var selectAllBtn: UIButton!
     
@@ -52,23 +59,23 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     
     
-//    a. No of images on screen for first time
-//    b. No of images Suggested
-//    c. No of images selected
-//    d. No of images deleted
-//    e. Total no of images
+    //    a. No of images on screen for first time
+    //    b. No of images Suggested
+    //    c. No of images selected
+    //    d. No of images deleted
+    //    e. Total no of images
     
-   
+    
     @IBAction func selectUnselectAll(_ sender: Any) {
         
         selectAll(select: !allSelected)
     }
     
-
+    
     @IBAction func deleteImages(_ sender: Any) {
         
         GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesSelected, label: "\(String(describing: deletionSet?.count))")
- 
+        
         
         if((deletionSet?.count)!>0)
         {
@@ -81,70 +88,70 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             //copyImagesToTrash(asset: deletionAsset!)
             
             DispatchQueue.global(qos: .userInitiated).async {
-            self.copyImagesToTrash(asset: self.deletionAsset!, completionHandler: { (success) -> Void in
-                
-                // When download completes,control flow goes here.
-                if success {
+                self.copyImagesToTrash(asset: self.deletionAsset!, completionHandler: { (success) -> Void in
                     
-                    GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesDeleted, label: "\(String(describing: self.deletionSet?.count))")
-                    // download success
-                    PHPhotoLibrary.shared().performChanges({
-                        let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: self.deletionSet!, options: nil)
-                        PHAssetChangeRequest.deleteAssets(imageAssetToDelete)
-                    }, completionHandler: {success, error in
-                        print(success ? "Success" : error )
-                        if(success)
-                        {
-                            //DatabaseManagement.shared.deleteContacts(mPath: self.deletionSet!)
-                            
-                            DatabaseManagement.shared.finishTrashTransaction(mPath: self.deletionSet!)
-                            
-                            DispatchQueue.main.async {
-                                // Update UI
-                                //self.navigationController?.popViewController(animated: true)
+                    // When download completes,control flow goes here.
+                    if success {
+                        
+                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesDeleted, label: "\(String(describing: self.deletionSet?.count))")
+                        // download success
+                        PHPhotoLibrary.shared().performChanges({
+                            let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: self.deletionSet!, options: nil)
+                            PHAssetChangeRequest.deleteAssets(imageAssetToDelete)
+                        }, completionHandler: {success, error in
+                            print(success ? "Success" : error )
+                            if(success)
+                            {
+                                //DatabaseManagement.shared.deleteContacts(mPath: self.deletionSet!)
                                 
-                                //self.dismiss(animated: true, completion: nil)
+                                DatabaseManagement.shared.finishTrashTransaction(mPath: self.deletionSet!)
                                 
-                                //                    self.navigationController?.popViewController(animated: false)
-                                //
-                                //                    self.delegate?.DeletionScreen(string: "Sent from ReviewController")
-                                
-                                
-                                var viewControllersArray = self.navigationController?.viewControllers
-                                viewControllersArray?.removeLast()
-                                
-                                
-                                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                                let controller = storyboard.instantiateViewController(withIdentifier: "DeletingScreen") as! DeletionViewController
-                                //            self.present(controller, animated: true, completion: nil)
-                                controller.deletionNumber=self.deletionSet?.count
-                                
-                                //            let reviewViewC = ReviewViewController()
-                                
-                                viewControllersArray?.append(controller)
-                                
-                                self.navigationController?.setViewControllers(viewControllersArray!, animated: true)
-                                
+                                DispatchQueue.main.async {
+                                    // Update UI
+                                    //self.navigationController?.popViewController(animated: true)
+                                    
+                                    //self.dismiss(animated: true, completion: nil)
+                                    
+                                    //                    self.navigationController?.popViewController(animated: false)
+                                    //
+                                    //                    self.delegate?.DeletionScreen(string: "Sent from ReviewController")
+                                    
+                                    
+                                    var viewControllersArray = self.navigationController?.viewControllers
+                                    viewControllersArray?.removeLast()
+                                    
+                                    
+                                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let controller = storyboard.instantiateViewController(withIdentifier: "DeletingScreen") as! DeletionViewController
+                                    //            self.present(controller, animated: true, completion: nil)
+                                    controller.deletionNumber=self.deletionSet?.count
+                                    
+                                    //            let reviewViewC = ReviewViewController()
+                                    
+                                    viewControllersArray?.append(controller)
+                                    
+                                    self.navigationController?.setViewControllers(viewControllersArray!, animated: true)
+                                    
+                                    
+                                }
                                 
                             }
-                            
-                        }
-                        else{
-                            self.deleteFolderContent(folderPath: self.folderPath!)
-                        }
-                    })
-
-                    
-                } else {
-                    // download fail
-                    
-                    let alert = UIAlertController(title: "Error", message: "Error Occured, Please try again", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                    
-                }
-            })
-            
+                            else{
+                                self.deleteFolderContent(folderPath: self.folderPath!)
+                            }
+                        })
+                        
+                        
+                    } else {
+                        // download fail
+                        
+                        let alert = UIAlertController(title: "Error", message: "Error Occured, Please try again", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                })
+                
             }
         }
         else{
@@ -155,13 +162,13 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         }
         
         
-
+        
     }
     
-
+    
     
     override func viewDidAppear(_ animated: Bool) {
-         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenName)
+        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenName)
     }
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -170,42 +177,39 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.reviewScreen, custDimVal: String(describing : Preferences.shared.setReviewScreenPreference))
         
-        updateHeader()
-       // self.navigationBar.topItem.title = "\(deletionSet?.count) Photos Selected"
+       
         
-        yourCellInterItemSpacing=2
+        yourCellInterItemSpacing=3
         
-        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is required because UICollectionViewLayout doesn't offer header pin. Its feature of UICollectionViewFlowLayout
-        //layout?.sectionHeadersPinToVisibleBounds = true
+        if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
+        {
+            refreshScreen()
+            scanningOn=true
+        }
+        else
+        {
+            scanningViewHeightConstraint.constant = 0
+            scanningOn=false
+        }
+        
+        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is
+        layout?.minimumLineSpacing = 4
+        collectionView!.collectionViewLayout = layout!
         
         deletionAsset = [PHAsset]()
         
-        //asset = PHAsset.fetchAssets(withLocalIdentifiers: DatabaseManagement.shared.getIdentifiers(), options: nil)
-        
-
-        // Register cell classes
-        // self.collectionView!.register(CollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        
-//        self.collectionView.register(UINib(nibName: HCollectionReusableView.nibName, bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: HCollectionReusableView.reuseIdentifier)
-        //asset=getAssetsFromAlbum(albumName: "WhatsApp")
+        self.navigationController?.navigationBar.tintColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
         
         deletionSet=[String]()
-        
         dataModel=[ImageModel]()
         newDataModel=getData()
         
+        self.deleteBtn.layer.cornerRadius = 8
         
-        
-        let gifManager = SwiftyGifManager(memoryLimit:20)
-        let gif = UIImage(gifName: "loading_gif")
-        let imageview = UIImageView(gifImage: gif, manager: gifManager)
-        imageview.frame = CGRect(x: self.view.frame.size.width - 50.0 , y: (self.scanningView.frame.size.height-40.0)/2, width: 40.0, height: 40.0)
-        scanningView.addSubview(imageview)
-    
         selectAll(select: true)
         
         print("Total Photos",  asset?.count ?? "No Photos in whatsapp")
-
+        
         
         // Do any additional setup after loading the view.
         
@@ -219,46 +223,66 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.totalNoOfImages, label: "\(DatabaseManagement.shared.getTotalImageCount())")
             
             GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: dataModel?.count))")
-
-             Preferences.shared.setfistTimePreference()
+            
+            Preferences.shared.setfistTimePreference()
         }
         
         //updateHeader()
         
         updateTitle()
+        updateHeader()
         
-        if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
-        {
-            refreshScreen()
+        
+        let lpgr = UILongPressGestureRecognizer(target: self, action: #selector(ReviewViewController.handleLongPress(gestureRecognizer:)))
+        
+        lpgr.minimumPressDuration = 0.5
+        lpgr.delegate = self
+        lpgr.delaysTouchesBegan = true
+        self.collectionView?.addGestureRecognizer(lpgr)
+        
+    }
+    
+    func handleLongPress(gestureRecognizer : UILongPressGestureRecognizer){
+        
+        if (gestureRecognizer.state != UIGestureRecognizerState.ended){
+            return
         }
-        else{
-//            scanningView.isHidden=true
-            scanningViewHeightConstraint.constant = 0
+        
+        let p = gestureRecognizer.location(in: self.collectionView)
+        
+        if let indexPath : NSIndexPath = (self.collectionView?.indexPathForItem(at: p))! as NSIndexPath{
+            //do whatever you need to do
+            print("Long Pressed")
+            photoZoomIdentifier = dataModel?[indexPath.row].getIdentifier()
+            photoZoomPosition = indexPath.row
+            photoZoomSelected = dataModel?[indexPath.row].getChecked()
+            performSegue(withIdentifier: "PhotoZoom", sender: nil)
+            
         }
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
     
     
     
     func updateTitle()
     {
-       self.collectionView.reloadData()
+        self.collectionView.reloadData()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -271,37 +295,55 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         print("Refresh Recycler")
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
+            
+            DispatchQueue.global(qos:.background).async {
+                self.newDataModel=self.getData()
+                self.dataModel=self.newDataModel
+                
+                let scannedImages=DatabaseManagement.shared.getScannedImages()
+                let totalImages=DatabaseManagement.shared.getTotalImageCount()
+                
+                DispatchQueue.main.async(execute:{
+                    self.selectOrDeselectAll(select: true)
+                    
+                    //self.updateHeader()
+                    self.updateTitle()
+                   
+                    if(self.deletionSet?.count == self.dataModel?.count)
+                    {
+                        self.allSelected=true
+                    }
+                    else{
+                        self.allSelected=false
+                    }
+                    
+                    self.checkUncheckAllBtn()
+                    
+                    if(scannedImages==totalImages)
+                    {
+                        self.refresh=false
+                        self.scanningViewHeightConstraint.constant = 0
+                        self.scanningOn=true
+                    }
+                    else
+                    {
+                        self.scanningOn=false
+                    }
+                    
+                     self.collectionView.reloadData()
+                    if(self.refresh==true)
+                    {
+                        self.refreshScreen()
+                    }
+                })
+            }
             //self.dataModel=self.getData()
-            self.newDataModel=self.getData()
-            self.selectOrDeselectAll(select: true)
-            self.dataModel=self.newDataModel
-            //self.updateHeader()
-            self.updateTitle()
-            self.collectionView.reloadData()
+            
+            
+            
            
-            if(self.deletionSet?.count == self.dataModel?.count)
-            {
-                self.allSelected=true
-            }
-            else{
-                self.allSelected=false
-            }
             
-            self.checkUncheckAllBtn()
-            
-        if(DatabaseManagement.shared.getScannedImages()==DatabaseManagement.shared.getTotalImageCount())
-        {
-                self.refresh=false
-                self.scanningViewHeightConstraint.constant = 0
-                //self.scanningView.isHidden=true
-        }
-            
-        if(self.refresh==true)
-        {
-            self.refreshScreen()
-        }
-
-            //self.refreshScreen()
+        
             
         })
     }
@@ -312,6 +354,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         //headerText.text = "\(deletionSet?.count ?? 0) Photos Selected"
         //headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
         self.title = "\(deletionSet?.count ?? 0) Photos Selected"
+        //self.title.
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -337,6 +380,8 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             fatalError("The dequeued cell is not an instance of CollectionViewCell.")
         }
         
+        
+        
         if(dataModel?[indexPath.row].getChecked())!
         {
             cell.checkBox.image = UIImage(named:"checked")
@@ -348,14 +393,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             cell.opaqueView.isHidden=false
         }
         
-        cell.backgroundColor=UIColor.blue
+        //cell.backgroundColor=UIColor.blue
         if let imageView = cell.image{
-            
-            
-            // imageView.image = getAssetThumbnail(asset: (asset?[indexPath.row])!)
-            //imageView.image = load(fileName: (dataModel?[indexPath.row].getPath())!)
             imageView.image = getImageFromIdentifier(identifier: (dataModel?[indexPath.row].getIdentifier())!)
-            // imageView.image = getImage()
         }
         
         
@@ -379,20 +419,28 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         case UICollectionElementKindSectionHeader:
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath) as! HCollectionReusableView
             
-            headerView.headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+            headerView.headerText.text = "\(dataModel?.count ?? 0) Junk Images"
+            
+            if(scanningOn)
+            {
+                headerView.scanningViewHeight.constant=30
+            }
+            else{
+                headerView.scanningViewHeight.constant=0
+            }
             //headerView.backgroundColor = UIColor.blue;
             return headerView
             
-//        case UICollectionElementKindSectionFooter:
-//            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: indexPath) as! UICollectionReusableView
-//
-//            footerView.backgroundColor = UIColor.gray;
-//            return footerView
+            //        case UICollectionElementKindSectionFooter:
+            //            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: indexPath) as! UICollectionReusableView
+            //
+            //            footerView.backgroundColor = UIColor.gray;
+            //            return footerView
             
         default:  fatalError("Unexpected element kind")
         }
     }
-   
+    
     
     // Uncomment this method to specify if the specified item should be selected
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
@@ -417,18 +465,18 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                 //deletionSet?.append((dataModel?[indexPath.row].getIdentifier())!)
             }
         }
-//        else if let _cell = collectionView.cellForItem(at: indexPath) as? HCollectionReusableView {
-//
-//            _cell.headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
-//        }
+        //        else if let _cell = collectionView.cellForItem(at: indexPath) as? HCollectionReusableView {
+        //
+        //            _cell.headerText.text = "\(dataModel?.count ?? 0) Junk Photos Found"
+        //        }
         
         
-       /* PHPhotoLibrary.shared().performChanges({
-            let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: [(self.dataModel?[indexPath.row].getIdentifier())!], options: nil)
-            PHAssetChangeRequest.deleteAssets(imageAssetToDelete)
-        }, completionHandler: {success, error in
-            print(success ? "Success" : error )
-        })*/
+        /* PHPhotoLibrary.shared().performChanges({
+         let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: [(self.dataModel?[indexPath.row].getIdentifier())!], options: nil)
+         PHAssetChangeRequest.deleteAssets(imageAssetToDelete)
+         }, completionHandler: {success, error in
+         print(success ? "Success" : error )
+         })*/
         //updateTitle()
         updateHeader()
         
@@ -438,7 +486,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         return true
     }
     
-
+    
     
     
     
@@ -565,32 +613,32 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             try FileManager.default.createDirectory(atPath: folderName.path, withIntermediateDirectories: true, attributes: nil)
             print("Trash folder created")
             //saveDirectory(diresctoryPath: (SplashViewController.logsPath?.path)!)
-    
+            
             return true
-    
+            
         } catch let error as NSError {
             NSLog("Unable to create directory \(error.debugDescription)")
             return false
-        
+            
         }
-
+        
     }
     
-   
+    
     func printTime() {
         
         let dateFormatter = DateFormatter()
         let requestedComponent: Set<Calendar.Component> = [.month,.day,.hour,.minute,.second]
         let userCalendar = Calendar.current
-
-
+        
+        
         dateFormatter.dateFormat = "ddMMyyhhmmss"
         let endTime  = Date()
         let startTime = dateFormatter.date(from: "251216000000")
         let timeDifference = userCalendar.dateComponents(requestedComponent, from: startTime!, to: endTime)
         
         print("month : ",timeDifference.month," days : ",timeDifference.day)
-    
+        
         //dateLabelOutlet.text = "\(timeDifference.month) Months \(timeDifference.day) Days \(timeDifference.minute) Minutes \(timeDifference.second) Seconds"
     }
     
@@ -605,7 +653,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         print("Today's date : ",result)
         folderPath=(SplashViewController.logsPath?.appendingPathComponent(result))!
         createDeletionDirectory(folderName: folderPath!)
-    
+        
         print(deletionAsset?.count)
         
         var k=0
@@ -641,14 +689,14 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             }
             
         }
-
+        
         
         print(folderPath?.path)
         let filemanager:FileManager = FileManager()
         let files = filemanager.enumerator(atPath: (SplashViewController.logsPath!.path))
         while let file = files?.nextObject() {
             print("Trash images :",file)
-    
+            
         }
         
         completionHandler(flag)
@@ -678,7 +726,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             print("Trash images :",file)
             
         }
-
+        
     }
     
     
@@ -709,7 +757,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                 img.setChecked(checked: false)
             }
             
-         
+            
         }
         
         //checkUncheckAllBtn()
@@ -718,7 +766,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         updateHeader()
         
     }
-
+    
     
     
     func selectAll(select : Bool)
@@ -753,26 +801,68 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         updateHeader()
         
     }
-
+    
     
     func checkUncheckAllBtn()
     {
         if(self.deletionSet?.count == self.dataModel?.count)
         {
             allSelected=true
-             selectAllBtn.setImage(UIImage(named: "select_all_checked.png"), for: UIControlState.normal)
+            selectAllBtn.setImage(UIImage(named: "checked.png"), for: UIControlState.normal)
         }
         else if(self.deletionSet?.count == 0)
         {
-             allSelected=false
+            allSelected=false
             selectAllBtn.setImage(UIImage(named: "none_selected.png"), for: UIControlState.normal)
         }
         else{
             allSelected=false
-            selectAllBtn.setImage(UIImage(named: "select_all_unchecked.png"), for: UIControlState.normal)
+            selectAllBtn.setImage(UIImage(named: "select_all_checked.png"), for: UIControlState.normal)
         }
         
-       
+        selectedText.setTitle("\((self.deletionSet?.count)!) Selected", for: .normal)
+        
+        
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? ImageZoomViewController {
+            destination.delegate = self
+            destination.identifier = photoZoomIdentifier
+            destination.position = photoZoomPosition
+            destination.selected = photoZoomSelected
+        }
+        
+        
+    }
+    
+    func selectImage(string: Int, selected : Bool) {
+        // print(string)
+        
+        
+        if(selected)
+        {
+            dataModel?[string].setChecked(checked: true)
+            deletionSet?.append((dataModel?[string].getIdentifier())!)
+            deletionAsset?.append((dataModel?[string].getPHAsset())!)
+        }
+        else
+        {
+            dataModel?[string].setChecked(checked: false)
+            deletionSet = deletionSet?.filter { $0 != dataModel?[string].getIdentifier() }
+            deletionAsset = deletionAsset?.filter { $0 != dataModel?[string].getPHAsset() }
+            //deletionSet?.append((dataModel?[indexPath.row].getIdentifier())!)
+        }
+        
+        
+        updateHeader()
+        checkUncheckAllBtn()
+        
+        self.collectionView.reloadData()
+        
+        
+        
+    }
+    
+    
 }

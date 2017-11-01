@@ -14,6 +14,12 @@ class TrashCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var opaqueView: UIView!
     @IBOutlet weak var image: UIImageView!
     
+    override func awakeFromNib() {
+        image.layer.cornerRadius = 8
+        image.clipsToBounds = true
+        image.contentMode = .scaleToFill
+    }
+    
     
     func imageSelection() -> Bool
     {

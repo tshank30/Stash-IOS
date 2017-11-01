@@ -12,7 +12,7 @@ import Photos
 private let reuseIdentifier = "trash_cell"
 
 class TrashViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout  {
-
+    
     var asset : [PHAsset]?
     var deletionAsset : [PHAsset]?
     var dataModel : [ImageModel]?
@@ -24,13 +24,13 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
     @IBOutlet weak var restoreBtn: UIButton!
     @IBOutlet weak var deletePermanently: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-  
+    
     /*@IBAction func backButton(_ sender: Any) {
-        
-        navigationController?.popViewController(animated: true)
-        dismiss(animated: true, completion: nil)
-        
-    }*/
+     
+     navigationController?.popViewController(animated: true)
+     dismiss(animated: true, completion: nil)
+     
+     }*/
     
     @IBAction func deletePermanently(_ sender: Any) {
         
@@ -51,7 +51,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         if((deletionSet?.count)!>0)
         {
-        showRecoveryAlert()
+            showRecoveryAlert()
         }
         else{
             let alert = UIAlertController(title: "Select Photos", message: "Please select some photos", preferredStyle: UIAlertControllerStyle.alert)
@@ -59,10 +59,10 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             self.present(alert, animated: true, completion: nil)
             
         }
-
+        
     }
     
-        //"file://\((dataModel?[indexPath.row].getTrashPath())!)"
+    //"file://\((dataModel?[indexPath.row].getTrashPath())!)"
     
     func recoverImages()
     {
@@ -72,10 +72,10 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             let imageLocation = "file://\(imagePath)"
             RecoverPhotos.sharedInstance.save(image: getImageFromPath(imageUrlPath: imageLocation), identifier : deletionMap[imagePath]! )
             self.deleteFolderContent(folderPath: URL(string: imageLocation)!)
-//            if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
-//            {
-//
-//            }
+            //            if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
+            //            {
+            //
+            //            }
             
         }
         
@@ -83,13 +83,13 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.imagesRestore, label: "\(String(describing: deletionSet?.count))")
         
-         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-        self.dataModel=self.getData()
-        self.collectionView.reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            self.dataModel=self.getData()
+            self.collectionView.reloadData()
         })
-       // self.navigationController?.popViewController(animated: true)
-       // self.dismiss(animated: true, completion: nil)
-
+        // self.navigationController?.popViewController(animated: true)
+        // self.dismiss(animated: true, completion: nil)
+        
     }
     
     func deleteImages()
@@ -104,13 +104,13 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             
             
             DatabaseManagement.shared.deleteContact(mPath: deletionMap[imagePath]!)
-                          
+            
         }
         
         
         
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.permanentDeletion, label: "\(String(describing: deletionSet?.count))")
-
+        
         deletionSet?.removeAll()
         dataModel=getData()
         collectionView.reloadData()
@@ -125,7 +125,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.trashScreenName)
     }
     
-
+    
     func showRecoveryAlert()
     {
         let alert = UIAlertController(title: "Recover Photos", message: "Do you want to recover \(deletionSet?.count ?? 0) photos?", preferredStyle: UIAlertControllerStyle.alert)
@@ -145,11 +145,11 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
                 
             case .destructive:
                 print("destructive")
-
+                
             }
         }))
         
-    
+        
     }
     
     func permanentDeletionAlert()
@@ -177,15 +177,23 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         
     }
-  
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        yourCellInterItemSpacing=2
         
-        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is required because UICollectionViewLayout doesn't offer header pin. Its feature of UICollectionViewFlowLayout
-        layout?.sectionHeadersPinToVisibleBounds = true
+        
+        //        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is required because UICollectionViewLayout doesn't offer header pin. Its feature of UICollectionViewFlowLayout
+        //        layout?.sectionHeadersPinToVisibleBounds = true
+        
+        yourCellInterItemSpacing=3
+        
+        let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is
+        layout?.minimumLineSpacing = 4
+        collectionView!.collectionViewLayout = layout!
+        
+        self.navigationController?.navigationBar.tintColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
         
         deletionAsset = [PHAsset]()
         
@@ -202,18 +210,19 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         dataModel=getData()
         
-
-
+        self.restoreBtn.layer.cornerRadius = 8
+        self.deletePermanently.layer.cornerRadius = 8
+        
         // Do any additional setup after loading the view.
     }
-
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
         // Dispose of any resources that can be recreated.
     }
-
+    
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -250,7 +259,7 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             cell.opaqueView.isHidden=false
         }
         
-        cell.backgroundColor=UIColor.blue
+        
         if let imageView = cell.image{
             
             let filePath = "file://\((dataModel?[indexPath.row].getTrashPath())!)"
@@ -305,6 +314,24 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         return true
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        switch kind {
+        case UICollectionElementKindSectionHeader:
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TrashHeader", for: indexPath) as! TrashHeaderReusableView
+            
+            //headerView.backgroundColor = UIColor.blue;
+            return headerView
+            
+        case UICollectionElementKindSectionFooter:
+            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "TrashFooter", for: indexPath) as! UICollectionReusableView
+            
+            return footerView
+            
+        default:  fatalError("Unexpected element kind")
+        }
+    }
+    
     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
     /* override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
      return false
@@ -346,29 +373,29 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func getImageFromPath(imageUrlPath : String) -> UIImage
     {
-       
-            //let fileURL = documentsUrl.appendingPathComponent(fileName)
-            do {
-                let fileURL = URL(string: imageUrlPath)
-                let imageData = try Data(contentsOf: fileURL!)
-                return UIImage(data: imageData)!
-            } catch {
-                print("Error loading image : \(error)")
-            }
-            return UIImage()
+        
+        //let fileURL = documentsUrl.appendingPathComponent(fileName)
+        do {
+            let fileURL = URL(string: imageUrlPath)
+            let imageData = try Data(contentsOf: fileURL!)
+            return UIImage(data: imageData)!
+        } catch {
+            print("Error loading image : \(error)")
+        }
+        return UIImage()
     }
     
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
     
     func deleteFolderContent(folderPath : URL)
     {
@@ -394,5 +421,5 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         }
         
     }
-
+    
 }

@@ -279,9 +279,26 @@ class DatabaseManagement
     
     
     func getContacts() -> [ImageModel] {
+        
+        let dateFormatter = DateFormatter()
+        let requestedComponent: Set<Calendar.Component> = [.year,.month,.day,.hour,.minute,.second]
+        let userCalendar = Calendar.current
+        
+        
+        dateFormatter.dateFormat = "ddMMyyhhmmss"
+        let timeRightNow  = Date()
+        let timeRightNowResult = dateFormatter.string(from: timeRightNow)
+        
+      
+        
         var images = [ImageModel]()
         
         do {
+            
+            
+    
+            
+            
             for contact in try db!.prepare(self.images!) {
                 if(Int(contact[RESPONSE_STATUS]) == 1  && Int(contact[ACTION_STATUS]) == 1)
                 {
@@ -305,6 +322,19 @@ class DatabaseManagement
             print("Select failed")
         }
         
+        
+        let timePrevious  = Preferences.shared.getDayTimePreference()
+        let startTime = dateFormatter.date(from: timePrevious)
+        
+        let timeRightNow2  = Date()
+        let timeRightNowResult2 = dateFormatter.string(from: timeRightNow2)
+        
+        if timeRightNow2 != nil {
+            
+            let timeDifference = userCalendar.dateComponents(requestedComponent, from: timeRightNow, to: timeRightNow2)
+            
+            print("execution time",timeDifference.second)
+        }
         return images
     }
     

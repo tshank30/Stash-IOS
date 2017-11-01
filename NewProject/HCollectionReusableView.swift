@@ -10,19 +10,15 @@ import UIKit
 
 class HCollectionReusableView: UICollectionReusableView {
     
+    @IBOutlet weak var headerScanningView: UIView!
     @IBOutlet weak var headerText: UILabel!
-    static var nibName : String
-    {
-        get { return "headerNIB"}
-    }
-    
-    static var reuseIdentifier: String
-    {
-        get { return "headerCell"}
-    }
+  
+    @IBOutlet weak var scanningViewHeight: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        headerScanningView.layer.cornerRadius = 4
+        headerScanningView.clipsToBounds = true
     }
 }

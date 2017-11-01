@@ -10,5 +10,7 @@
 #define BridgingHeader_h
 
 #import <Google/Analytics.h>
+#import <MBProgressHUD.h>
+
 
 #endif /* BridgingHeader_h */
