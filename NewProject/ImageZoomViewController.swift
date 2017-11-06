@@ -17,6 +17,10 @@ protocol VCImageZoomDelegate {
 class ImageZoomViewController: UIViewController, EFImageViewZoomDelegate {
 
    
+    @IBAction func done(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
     @IBOutlet weak var selectedText: UIButton!
     @IBOutlet weak var selectorImage: UIButton!
     var delegate:VCImageZoomDelegate!

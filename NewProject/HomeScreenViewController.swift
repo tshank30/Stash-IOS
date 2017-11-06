@@ -237,11 +237,11 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     // self.scanningView.isHidden=false
                     self.junkNumber.text="Scanning"
                     self.junkPhotoFound.text = "Images"
-                    self.scanBtn.isEnabled=true
+                    self.scanBtn.isEnabled=false
                     self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0xdae0e7)
                     self.scanBtn.layer.cornerRadius = 8
                     self.scanBtn.layer.borderWidth = 1
-                    self.scanBtn.layer.borderColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0).cgColor
+                    self.scanBtn.layer.borderColor = UIColor.init(red:218/255.0, green:224/255.0, blue:231/255.0, alpha: 1.0).cgColor
                     self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
                 }
                 else
@@ -298,6 +298,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+         print("Memory warning")
         // Dispose of any resources that can be recreated.
     }
     

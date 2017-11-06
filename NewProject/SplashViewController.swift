@@ -11,7 +11,7 @@ import Photos
 import UserNotifications
 
 class SplashViewController: UIViewController {
-
+    
     var asset : [PHAsset]?
     var images : [ImageModel]?
     var queue:OperationQueue? = nil
@@ -22,32 +22,32 @@ class SplashViewController: UIViewController {
     var request=0;
     
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationController?.navigationBar.barTintColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x1D8C7E)
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.runCount, custDimVal: Preferences.shared.setRunCountPreference())
-       
-        
-       
         
         
         
-//        let content = UNMutableNotificationContent()
-//        content.title = "Don't forget"
-//        content.body = "Buy some milk"
-//        content.sound = UNNotificationSound.default()
-//        
-//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
-//                                                        repeats: false)
+        
+        
+        
+        //        let content = UNMutableNotificationContent()
+        //        content.title = "Don't forget"
+        //        content.body = "Buy some milk"
+        //        content.sound = UNNotificationSound.default()
+        //
+        //        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
+        //                                                        repeats: false)
         
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        
+        print("Memory warning")
         // Dispose of any resources that can be recreated.
     }
     
@@ -97,20 +97,31 @@ class SplashViewController: UIViewController {
         let urlWhats = "whatsapp://send?phone=+918826756265&abid=12354&text=Hello"
         if let urlString = urlWhats.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
             if let whatsappURL = URL(string: urlString) {
-                if UIApplication.shared.canOpenURL(whatsappURL) {
-                    //UIApplication.shared.openURL(whatsappURL)
-                    //UIApplication.shared.open(whatsappURL as URL, options: [:], completionHandler: nil)
-                    self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
+                DispatchQueue.main.async (execute: {
                     
-                } else {
+                        if UIApplication.shared.canOpenURL(whatsappURL) {
+                            
+                            DispatchQueue.global(qos:.background).async {
+                                self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
+                            }
+                            
+                            
+                        } else {
+                            
+                            DispatchQueue.global(qos:.background).async {
+                                self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
+                                print("Install Whatsapp")
+                            }
+                            
+                        }
                     
-                    self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
-                    print("Install Whatsapp")
-                }
+                })
             }
         }
         
-
+        
+        
+        
     }
     
     lazy var downloadsInProgress = [NSIndexPath:Operation]()
@@ -120,16 +131,16 @@ class SplashViewController: UIViewController {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
     
     
     func getAssetsFromAlbum(albumName: String) -> [PHAsset] {
@@ -151,31 +162,31 @@ class SplashViewController: UIViewController {
         }
         let myOpQueue = OperationQueue()
         myOpQueue.maxConcurrentOperationCount = 4
-
+        
         semaphore = DispatchSemaphore(value: 0) // DispatchSemaphore(value: 0)
         
         print("Photo count",collection.count)
         if( collection.count > 0)
         {
-        for k in 0 ..< collection.count {
-            let obj:AnyObject! = collection.object(at: k)
-            if (obj.title == albumName  || fetchAll ) {
-                if let assCollection = obj as? PHAssetCollection {
-                    let results = PHAsset.fetchAssets(in: assCollection, options: options)
-                    var assets = [PHAsset]()
-                    
-                    results.enumerateObjects({ (obj, index, stop) in
+            for k in 0 ..< collection.count {
+                let obj:AnyObject! = collection.object(at: k)
+                if (obj.title == albumName  || fetchAll ) {
+                    if let assCollection = obj as? PHAssetCollection {
+                        let results = PHAsset.fetchAssets(in: assCollection, options: options)
+                        var assets = [PHAsset]()
                         
-                        if let asset = obj as? PHAsset {
+                        results.enumerateObjects({ (obj, index, stop) in
                             
-                            if asset.mediaType == .image{
-                                assets.append(asset)
+                            if let asset = obj as? PHAsset {
                                 
-                                asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
-                                    if let input = eidtingInput, let imgURL = input.fullSizeImageURL {
-                                        // imgURL
-                                        
-                                       // DispatchQueue.global(qos: .userInitiated).async { // 1
+                                if asset.mediaType == .image{
+                                    assets.append(asset)
+                                    
+                                    asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
+                                        if let input = eidtingInput, let imgURL = input.fullSizeImageURL {
+                                            // imgURL
+                                            
+                                            // DispatchQueue.global(qos: .userInitiated).async { // 1
                                             j=j+1
                                             print(imgURL)
                                             let img=ImageModel()
@@ -184,10 +195,10 @@ class SplashViewController: UIViewController {
                                             img.setChecked(checked: false)
                                             img.setResponseStatus(mResponseStatus: 0)
                                             img.setActionStatus(status: 0)
-                                        
-                                             // self.images?.append(img)
-                                        
-                                             //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
+                                            
+                                            // self.images?.append(img)
+                                            
+                                            //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
                                             //print("total images in DB ",self.images?.count ?? "nothing in DB")
                                             DatabaseManagement.shared.insertImageWithIdentifier(img: img)
                                             
@@ -195,13 +206,13 @@ class SplashViewController: UIViewController {
                                             {
                                                 self.myGroup.enter()
                                                 myOpQueue.addOperation{
-                                                
+                                                    
                                                     self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: imgURL.lastPathComponent)
                                                     
-                                                
+                                                    
                                                 }
                                             }
-                                        
+                                            
                                             DispatchQueue.main.async { // 2
                                                 //self.fadeInNewImage(overlayImage) // 3
                                                 print("Total Photos",  self.asset?.count ?? "No Photos in whatsapp")
@@ -214,33 +225,33 @@ class SplashViewController: UIViewController {
                                                     self.performSegue(withIdentifier: "HomeScreen", sender: nil)
                                                     
                                                 }
-   
+                                                
                                             }
                                         }
-                                }
+                                    }
                                 }
                                 
                             }
                             
-                        //}
-                    })
-                    
-                   myGroup.notify(queue: .main) {
-                        print("Finished all requests.")
-                }
-
-                    //initalaizeUrls(assets: assets)
-                    print("returning asset")
-                    return assets
+                            //}
+                        })
+                        
+                        myGroup.notify(queue: .main) {
+                            print("Finished all requests.")
+                        }
+                        
+                        //initalaizeUrls(assets: assets)
+                        print("returning asset")
+                        return assets
+                    }
                 }
             }
-        }
         }
         else{
             self.dismiss(animated: true, completion: nil)
             self.performSegue(withIdentifier: "HomeScreen", sender: nil)
         }
-         print("returning emmty asset")
+        print("returning emmty asset")
         return [PHAsset]()
     }
     
@@ -288,14 +299,14 @@ class SplashViewController: UIViewController {
         case .notDetermined:
             // ask for permissions
             
-             print("Photos : not determined")
-             GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.fired)
+            print("Photos : not determined")
+            GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.fired)
             PHPhotoLibrary.requestAuthorization() { status in
                 switch status {
                 case .authorized:
                     
                     self.afterPermissionTask()
-
+                    
                     GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.granted)
                     
                     print("Photos : Authorized")
@@ -303,7 +314,7 @@ class SplashViewController: UIViewController {
                 //handle authorized status
                 case .denied, .restricted :
                     print("Photos : denied, restricted")
-                   
+                    
                     self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts()
                     break
                 //handle denied status
@@ -350,48 +361,29 @@ class SplashViewController: UIViewController {
             }
         }))
         
-    
+        
         self.present(cameraUnavailableAlertController , animated: true, completion: nil)
     }
     
     
     override func viewDidAppear(_ animated: Bool) {
-    
+        
         checkPhotoLibraryPermission()
         
     }
     
     func UploadRequest(image : UIImage, mPath : String, filename :String)     {
         var url : NSURL?
-       
+        
         url = NSURL(string:"http://223.165.30.63:8002/")
-//        if(self.request==0)
-//        {
-//             url = NSURL(string: "http://ankit182.pythonanywhere.com/polls/")
-//            self.request=1
-//        }
-//        else if(self.request==1)
-//        {
-//             url = NSURL(string: "http://dean96633.pythonanywhere.com/polls/")
-//            self.request=2
-//        }
-//        else if(self.request==2)
-//        {
-//             url = NSURL(string: "http://akshit92.pythonanywhere.com/")
-//            self.request=3
-//        }
-//        else if(self.request==3)
-//        {
-//             url = NSURL(string: "http://aki92.pythonanywhere.com/")
-//            self.request=0
-//        }
+     
         let request = NSMutableURLRequest(url: url! as URL)
         request.httpMethod = "POST"
         
         let boundary = generateBoundaryString()
         
         //define the multipart request type
-       
+        
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
         
@@ -402,7 +394,7 @@ class SplashViewController: UIViewController {
         
         let image_data = UIImagePNGRepresentation(image)
         
-       // print("",image_data?.count)
+        // print("",image_data?.count)
         
         // request.setValue("\(image_data?.count)", forHTTPHeaderField: "Content-Length")
         
@@ -440,7 +432,7 @@ class SplashViewController: UIViewController {
         request.httpBody = body as Data
         
         let session = URLSession.shared
-
+        
         session.configuration.timeoutIntervalForRequest = 120
         
         let task = session.dataTask(with: request as URLRequest) {
@@ -486,25 +478,25 @@ class SplashViewController: UIViewController {
                 print("Error deserializing JSON: \(error)")
             }
             
-           
-         
-           
-//            var dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-//            print(dataString ?? "No Data")
-//
-//            let fullNameArr=dataString?.components(separatedBy: " ")
-//            if((fullNameArr?.count)!>3)
-//            {
-//                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
-//                print("junk insertion :", result)
-//
-//            }
-//            else{
-//                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
-//                print("non junk insertion :", result)
-//
-//            }
-        
+            
+            
+            
+            //            var dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+            //            print(dataString ?? "No Data")
+            //
+            //            let fullNameArr=dataString?.components(separatedBy: " ")
+            //            if((fullNameArr?.count)!>3)
+            //            {
+            //                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
+            //                print("junk insertion :", result)
+            //
+            //            }
+            //            else{
+            //                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
+            //                print("non junk insertion :", result)
+            //
+            //            }
+            
             self.semaphore?.signal()
             //semaphore.wait
             
@@ -530,7 +522,7 @@ class SplashViewController: UIViewController {
         return nil
     }
     
-
+    
     
     
     func generateBoundaryString() -> String
@@ -549,7 +541,7 @@ class SplashViewController: UIViewController {
         })
         return thumbnail
     }
-
+    
     func getDirectory() -> String
     {
         let preferences = UserDefaults.standard
@@ -568,16 +560,16 @@ class SplashViewController: UIViewController {
     func saveDirectory(diresctoryPath : String)
     {
         let preferences = UserDefaults.standard
-    
+        
         let currentLevelKey = "TrashPath"
-    
+        
         preferences.set(diresctoryPath, forKey : currentLevelKey)
         //let currentLevel =
-           // preferences.setInteger(currentLevel, forKey: currentLevelKey)
-    
+        // preferences.setInteger(currentLevel, forKey: currentLevelKey)
+        
         //  Save to disk
         let didSave = preferences.synchronize()
-    
+        
         if didSave {
             //  Couldn't save (I've never seen this happen in real world testing)
             print("preference saved")
@@ -585,9 +577,9 @@ class SplashViewController: UIViewController {
         else{
             print("preference not saved")
         }
-
+        
     }
-
+    
     
     func performDeletionAfterTenDays()
     {
@@ -598,7 +590,7 @@ class SplashViewController: UIViewController {
             print("Trash images :",file)
             
             var isDir : ObjCBool = false
-           
+            
             
             let fileManager1 = FileManager.default
             if fileManager1.fileExists(atPath: ("\(SplashViewController.logsPath!.path)/\(file)") ,isDirectory:&isDir)
@@ -616,7 +608,7 @@ class SplashViewController: UIViewController {
                     let timeDifference = userCalendar.dateComponents(requestedComponent, from: startTime!, to: endTime)
                     
                     print("Year : ",timeDifference.year," month : ",timeDifference.month," days : ",timeDifference.day)
-
+                    
                     let imageLocation = "file://\(SplashViewController.logsPath!.path)/\(file)"
                     
                     if let year = timeDifference.year { // If casting, use, eg, if let var = abc as? NSString
@@ -644,24 +636,24 @@ class SplashViewController: UIViewController {
                 } else {
                     print(file , ": file exists and is not a directory")
                 }
-
+                
             }
             else
             {
-                 print("file not exists : ","file://"+(String(SplashViewController.logsPath!.path+"/"+String(describing: file)))!)
+                print("file not exists : ","file://"+(String(SplashViewController.logsPath!.path+"/"+String(describing: file)))!)
             }
         }
         
         /*let fileManager = FileManager.default
-        var isDir : ObjCBool = false
-        print("TrashPath : ",trashPath)
-        if fileManager.fileExists(atPath: (trashPath)!, isDirectory:&isDir) {
-            if isDir.boolValue {
-                print("file exists and is a directory")
-            } else {
-                print("file exists and is not a directory")
-            }
-        }*/
+         var isDir : ObjCBool = false
+         print("TrashPath : ",trashPath)
+         if fileManager.fileExists(atPath: (trashPath)!, isDirectory:&isDir) {
+         if isDir.boolValue {
+         print("file exists and is a directory")
+         } else {
+         print("file exists and is not a directory")
+         }
+         }*/
     }
     
     func deleteFolderContent(folderPath : URL)
