@@ -1,454 +1,495 @@
 //
-//  DatabaseManagement.swift
+//  StashCoreData.swift
 //  NewProject
 //
-//  Created by Shashank Tiwari on 25/07/17.
+//  Created by Shashank Tiwari on 10/11/17.
 //  Copyright © 2017 Shashank Tiwari. All rights reserved.
 //
 
 import Foundation
-import SQLite
+import CoreData
 import Photos
 
 class DatabaseManagement
 {
-    static let teamId = Expression<Int64>("teamid")
-    private let  TAG = "DbUpdate";
-    public  let IMAGES_TB = "Images";
-    public  let PATH = Expression<String>("Path");
-    public  let IMAGE_PATH = Expression<String>("ImagePath");
-    public  let RESPONSE_STATUS = Expression<String>("ResponseStatus");
-    public  let ACTION_STATUS = Expression<String>("ActionStatus");
-    public  let FILE_SIZE = Expression<String>("FileSize");
-    public  let SCORE = Expression<String>("Score");
-    public  let IMAGE_TYPE = Expression<String>("ImageType");
-    public  let HIT_COUNT = Expression<String>("Hit");
-    public  let ANALYSER_TYPE = Expression<String>("Analyser");
-    public  let LAST_MODIFIED_DATE = Expression<String>("LastModifiedDate");
-    public  let TRASH_PATH = Expression<String>("TrashPath");
-    public  let IMAGE_TAGS = Expression<String>("Tags");
-    var images: Table?
-    
     static let shared:DatabaseManagement=DatabaseManagement()
-    private let db:Connection?
+    private var managedObjectContext: NSManagedObjectContext;
+    
+    //    responsestatus ->
+    //    scanned = 1
+    //    not sanned = 0
+    //    trash = 2
+    //    recovered = 3
+    
+    //    actionStatus ->
+    //    junk = 1
+    //    not junk = -1
+    //    ignored = 2
     
     private init()
     {
-        let path=NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        
-        do{
-            db=try Connection("\(path)/ishop.sqlite3")
-            print("Database is open")
-            // create table
-        }
-        catch{
-            db=nil
-            print("Unable to open database")
-        }
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.managedObjectContext = appDelegate.managedObjectContext
     }
     
     
-    
-    func createDataBase()
+    func getNotScannedAssets() -> [ImageModel]
     {
+        var images = [ImageModel]()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '0'")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "filesize", ascending: true)]
         
-        images = Table("Images")
-        do{
-            try db?.run((images?.create(ifNotExists: true) { t in     // CREATE TABLE "users" (
-                t.column(PATH) //     "id" INTEGER PRIMARY KEY NOT NULL,
-                t.column(IMAGE_PATH)
-                t.column(RESPONSE_STATUS)  //     "email" TEXT UNIQUE NOT NULL,
-                t.column(ACTION_STATUS)
-                t.column(FILE_SIZE)
-                t.column(SCORE)
-                t.column(IMAGE_TYPE)
-                t.column(HIT_COUNT)
-                t.column(LAST_MODIFIED_DATE)
-                t.column(IMAGE_TAGS)
-                t.column(TRASH_PATH)
-                })!)
-            print("Table Created")
-
-        }
-        catch{
-             print("Table not Created")
-        }
-    }
-    
-    func isPathPresent(mPath: String) -> Bool
-    {
-        do
-        {
-            let contact = self.images?.filter(IMAGE_PATH == mPath)
-            //db!.run(contact?.count)
-            for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
-                return true
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            if (result.count > 0) {
+                
+                for user in result
+                {
+                    let person = user as! NSManagedObject
+                    print("Table  - \(person)")
+                    
+                    let img = ImageModel(
+                        mPath: URL(string: String(describing: person.value(forKey: "imagepath")))!,
+                        mResponseStatus: Int(String(describing: person.value(forKey: "responsestatus")!))!,
+                        mTrashPath: String(describing: person.value(forKey: "trashpath")),
+                        identifier : String(describing: person.value(forKey: "path")!))
+                    
+                   // print("filesize \(person.value(forKey: "filesize")!)")
+                    
+                    print("fetchasset \(img.getIdentifier())")
+                    img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()], options: nil)[0])
+                    if let size=person.value(forKey: "filesize")
+                    {
+                        img.setFileSize(fileSize: Int64(String(describing: size))!)
+                        print("filesize \(size)")
+                    }
+                    images.append(img)
+                }
             }
             
-        }catch{
-            print("Image already present in DB")
-            return false
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
         }
         
-        return false
+        return images
     }
-
+    
+    
+    func getTotalImageCount() -> Int {
+        
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//
+//        // Create Entity Description
+//        let entityDescription = NSEntityDescription.entity(forEntityName: "Images", in: self.managedObjectContext)
+//
+//        // Configure Fetch Request
+//        fetchRequest.entity = entityDescription
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '3' OR responsestatus = '0' OR responsestatus = '1'")
+        
+        
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            return result.count
+            
+            
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+            return 0
+        }
+    }
+    
     
     func isPresent(mPath: String) -> Bool
     {
-        do
-        {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "path == %@", mPath)
+        
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            if (result.count > 0) {
                 return true
             }
+            else
+            {
+                return false
+            }
             
-        }catch{
-            print("Image already present in DB")
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
             return false
         }
-        
-        return false
-    }
-
-    
-    
-    func insertImage(img : ImageModel)
-    {
-        if(isPresent(mPath: img.getPath().path)==false)
-        {
-            let query = images?.insert(self.IMAGE_PATH <- img.getPath().path, self.PATH <- img.getPath().path, self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
-            do{
-                let rowid = try db?.run(query!)
-                print(rowid ?? "" ," Row insertion")
-            }
-            catch{
-                print("Error info: \(error)")
-            }
-        }
-        else
-        {
-            print("image already present")
-        }
-        
     }
     
-    func insertImageWithIdentifier(img : ImageModel)
+    func updateFileSize(fileSize: Int64,mPath : String) -> Bool
     {
-        if(isPresent(mPath: img.getIdentifier())==false)
-        {
-            let query = images?.insert(self.IMAGE_PATH <- img.getPath().path, self.PATH <- img.getIdentifier(), self.RESPONSE_STATUS <- "\(img.getResponseStatus())",self.TRASH_PATH <- "",self.ACTION_STATUS <- "\(img.getActionStatus())",self.FILE_SIZE <- "",self.SCORE <- "",self.IMAGE_TYPE <- "",self.HIT_COUNT <- "",self.LAST_MODIFIED_DATE <- "",self.IMAGE_TAGS<-"")
-            do{
-                let rowid = try db?.run(query!)
-                print(rowid ?? "" ," Row insertion")
-            }
-            catch{
-                print("Error info: \(error)")
-            }
-        }
-        else
-        {
-            print("image already present")
-        }
+        let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
+        let predicate = NSPredicate(format: "path = '\(mPath)'")
+        fetchRequest.predicate = predicate
         
-    }
-    
-    
-    func updateImageInDB(mPath: String,responseStatus : String, actionStatus : String) -> Bool
-    {
         do
         {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            
-            try db?.run((contact?.update(RESPONSE_STATUS <- responseStatus,ACTION_STATUS <- actionStatus))!)
-            return true
-           /* for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
-                return true
-            }*/
-            
-        }catch{
-            print("Image already present in DB")
-            return false
-        }
-        return false
-    }
-    
-    func updateImageInDBUsingPath(mPath: String,responseStatus : String, actionStatus : String) -> Bool
-    {
-        do
-        {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            
-            try db?.run((contact?.update(RESPONSE_STATUS <- responseStatus,ACTION_STATUS <- actionStatus))!)
-            return true
-            /* for user in try (db?.prepare(contact!))! {
-             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-             // id: 1, name: Optional("Alice"), email: alice@mac.com
-             return true
-             }*/
-            
-        }catch{
-            print("Error updating the status")
-            return false
-        }
-        return false
-    }
-    
-    
-    func isScanned(mPath: String) -> Bool
-    {
-        do
-        {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            
-            for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
+            let test = try self.managedObjectContext.fetch(fetchRequest)
+            if test.count == 1
+            {
+                let objectUpdate = test[0] as! NSManagedObject
+                objectUpdate.setValue(String(fileSize), forKey: "filesize")
+                //objectUpdate.setValue(actionStatus, forKey: "actionstatus")
                 
-                if(Int(user[RESPONSE_STATUS]) == 1)
-                {
-                    print("RESPONSE_STATUS","1")
+                do{
+                    try self.managedObjectContext.save()
                     return true
                 }
-                else
+                catch
                 {
-                    print("RESPONSE_STATUS","-1")
+                    print(error)
                     return false
                 }
             }
-            /* for user in try (db?.prepare(contact!))! {
-             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-             // id: 1, name: Optional("Alice"), email: alice@mac.com
-             return true
-             }*/
-            
-        }catch{
-            
-            print("error : No image in db with \(mPath)")
+        }
+        catch
+        {
+            print(error)
             return false
         }
+        
+        return false
+        
+    }
+    
+    
+    func insertImageWithIdentifier(img : ImageModel) -> Bool{
+        
+        if(!isPresent(mPath: img.getIdentifier()))
+        {
+            let managedContext = managedObjectContext
+            //NSPersistentStoreCoordinator.viewContext as! NSManagedObjectContext
+            
+            // 2
+            let entity =
+                NSEntityDescription.entity(forEntityName: "Images",
+                                           in: managedContext)!
+            
+            let person = NSManagedObject(entity: entity,
+                                         insertInto: managedContext)
+            
+            // 3
+            person.setValue(img.getIdentifier(), forKeyPath: "path")
+            person.setValue(String(describing: img.getPath()), forKeyPath: "imagepath")
+            person.setValue(String(describing: img.getResponseStatus()), forKeyPath: "responsestatus")
+            person.setValue(img.getTrashPath(), forKeyPath: "trashpath")
+            person.setValue(String(describing:img.getActionStatus()), forKeyPath: "actionstatus")
+            
+            
+            // 4
+            do {
+                try managedContext.save()
+                //people.append(person)
+                return true
+                
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+                return false
+            }
+            
+        }
+        else{
+            
+            print("Image already present")
+            return false
+        }
+    }
+    
+    func updateImageInDB(mPath: String,responseStatus : String, actionStatus : String) -> Bool
+    {
+        
+        let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
+        let predicate = NSPredicate(format: "path = '\(mPath)'")
+        fetchRequest.predicate = predicate
+        do
+        {
+            let test = try self.managedObjectContext.fetch(fetchRequest)
+            if test.count == 1
+            {
+                let objectUpdate = test[0] as! NSManagedObject
+                objectUpdate.setValue(responseStatus, forKey: "responsestatus")
+                objectUpdate.setValue(actionStatus, forKey: "actionstatus")
+                
+                do{
+                    try self.managedObjectContext.save()
+                    return true
+                }
+                catch
+                {
+                    print(error)
+                    return false
+                }
+            }
+        }
+        catch
+        {
+            print(error)
+            return false
+        }
+        
         return false
     }
     
     func isScannedWithIdentifier(identifier: String) -> Bool
     {
-        do
-        {
-            let contact = self.images?.filter(PATH == identifier)
-            //db!.run(contact?.count)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "path = '\(identifier)'")
+        
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
             
-            for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
+            if (result.count > 0) {
                 
-                if(Int(user[RESPONSE_STATUS]) == 1)
+                for user in result
                 {
-                    print("RESPONSE_STATUS","1")
-                    return true
+                    let person = user as! NSManagedObject
+                    
+                    print("Table  - \(person)")
+                    
+                    if let first = person.value(forKey: "responsestatus") {
+                        print("Table Path \(first)")
+                        if(Int(String(describing: first)) == 0 )
+                        {
+                            print("RESPONSE_STATUS","-1")
+                            return false
+                        }
+                        else
+                        {
+                            print("RESPONSE_STATUS","1")
+                            return true
+                        }
+                        
+                    }
+                    else{
+                        print("identifier not present in DB")
+                        return false
+                    }
+                    break
                 }
-                else
-                {
-                    print("RESPONSE_STATUS","-1")
-                    return false
-                }
+                
+                return false
             }
-            /* for user in try (db?.prepare(contact!))! {
-             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-             // id: 1, name: Optional("Alice"), email: alice@mac.com
-             return true
-             }*/
+            else
+            {
+                return false
+            }
             
-        }catch{
-            
-            print("error : No image in db with \(identifier)")
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
             return false
         }
-        return false
     }
     
-    
-    
-    func getContacts() -> [ImageModel] {
-        
-        let dateFormatter = DateFormatter()
-        let requestedComponent: Set<Calendar.Component> = [.year,.month,.day,.hour,.minute,.second]
-        let userCalendar = Calendar.current
-        
-        
-        dateFormatter.dateFormat = "ddMMyyhhmmss"
-        let timeRightNow  = Date()
-        let timeRightNowResult = dateFormatter.string(from: timeRightNow)
-        
-      
+    func getJunkImages() -> [ImageModel] {
         
         var images = [ImageModel]()
         
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '1' AND actionstatus = '1'")
+        
         do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
             
-            
-    
-            
-            
-            for contact in try db!.prepare(self.images!) {
-                if(Int(contact[RESPONSE_STATUS]) == 1  && Int(contact[ACTION_STATUS]) == 1)
+            if (result.count > 0) {
+                
+                for user in result
                 {
+                    let person = user as! NSManagedObject
+                    
+                    print("Table  - \(person)")
+                    
                     let img = ImageModel(
-                        mPath: URL(string: contact[PATH])!,
-                        mResponseStatus: Int(contact[RESPONSE_STATUS])!,
-                        mTrashPath: contact[TRASH_PATH],
-                        identifier : contact[PATH])
+                        mPath: URL(string: String(describing: person.value(forKey: "imagepath")))!,
+                        mResponseStatus: Int(String(describing: person.value(forKey: "responsestatus")!))!,
+                        mTrashPath: String(describing: person.value(forKey: "trashpath")),
+                        identifier : String(describing: person.value(forKey: "path")!))
                     
-                    //img.setChecked(checked: true)
+                    print("fetchasset \(img.getIdentifier())")
                     
-                     img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [contact[PATH]], options: nil)[0])
+                    img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()], options: nil)[0])
                     
                     images.append(img)
-                   
-                    print(contact[PATH])
+                    
+                    print(person.value(forKey: "path") ?? "no path")
+                    
                 }
-               // deleteContact(mPath: contact[PATH])
+                // print("2 - \(person)")
             }
+            
         } catch {
-            print("Select failed")
+            let fetchError = error as NSError
+            print(fetchError)
         }
         
-        
-        let timePrevious  = Preferences.shared.getDayTimePreference()
-        let startTime = dateFormatter.date(from: timePrevious)
-        
-        let timeRightNow2  = Date()
-        let timeRightNowResult2 = dateFormatter.string(from: timeRightNow2)
-        
-        if timeRightNow2 != nil {
-            
-            let timeDifference = userCalendar.dateComponents(requestedComponent, from: timeRightNow, to: timeRightNow2)
-            
-            print("execution time",timeDifference.second)
-        }
         return images
+        
     }
     
-    
-    func getIdentifiers() -> [String] {
-        var images = [String]()
+    func getJunkImagesCount() -> Int {
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '1' AND actionstatus = '1'")
         
         do {
-            for contact in try db!.prepare(self.images!) {
-                if(Int(contact[RESPONSE_STATUS]) != 2 && Int(contact[ACTION_STATUS]) == 1)
-                {
-                    
-                    images.append(contact[PATH])
-                    
-                    print(contact[PATH])
-                }
-                // deleteContact(mPath: contact[PATH])
-            }
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            return result.count
+            
+            
+            
         } catch {
-            print("Select failed")
+            let fetchError = error as NSError
+            print(fetchError)
+            
+            return 0
         }
         
-        return images
+        
     }
+    //
     
     func getTrashImages() -> [ImageModel] {
+        
         var images = [ImageModel]()
         
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '2' AND actionstatus = '1'")
+        
         do {
-            for contact in try db!.prepare(self.images!) {
-                if(Int(contact[RESPONSE_STATUS]) == 2 && Int(contact[ACTION_STATUS]) == 1)
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            if (result.count > 0) {
+                
+                for user in result
                 {
-                    images.append(ImageModel(
-                        mPath: URL(string: contact[PATH])!,
-                        mResponseStatus: Int(contact[RESPONSE_STATUS])!,
-                        mTrashPath: (SplashViewController.logsPath?.appendingPathComponent(contact[TRASH_PATH]).path)!,
-                        identifier : contact[PATH]))
+                    let person = user as! NSManagedObject
                     
-                    print(contact[PATH])
+                    print("Table  - \(person)")
+                    
+                    let identifier=String(describing: person.value(forKey: "trashpath")!)
+                    
+                    let img = ImageModel(
+                        mPath: URL(string: String(describing: person.value(forKey: "imagepath")))!,
+                        mResponseStatus: Int(String(describing: person.value(forKey: "responsestatus")!))!,
+                        mTrashPath:((SplashViewController.logsPath?.appendingPathComponent(identifier))?.path)!, identifier : String(describing: person.value(forKey: "path")!))
+                    
+                   
+                   // img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()] , options: nil)[0])
+                    
+                        images.append(img)
+                    
+                    print(person.value(forKey: "path"))
+                    
                 }
-                // deleteContact(mPath: contact[PATH])
+                // print("2 - \(person)")
             }
+            
         } catch {
-            print("Select failed")
+            let fetchError = error as NSError
+            print(fetchError)
         }
         
         return images
+        
     }
+    
+    func getAllImages() -> [String]
+    {
+        var images = [String]()
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '0' OR responsestatus = '1' OR responsestatus = '3'")
+        
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            if (result.count > 0) {
+                
+                for user in result
+                {
+                    let person = user as! NSManagedObject
+                    
+                    print("Table  - \(person)")
+                    
+                    //                    let img = ImageModel(
+                    //                        mPath: URL(string: String(person.value(forKey: "imagepath")))!,
+                    //                        mResponseStatus: Int(String(person.value(forKey: "responsestatus")))!,
+                    //                        mTrashPath: String(person.value(forKey: "trashpath")) ,
+                    //                        identifier : String(person.value(forKey: "path")))
+                    //
+                    //                    img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: person.value(forKey: "path"), options: nil)[0])
+                    //
+                    images.append(String(describing: person.value(forKey: "path")!))
+                    
+                    print("identifiers \(person.value(forKey: "path")!)")
+                }
+                // print("2 - \(person)")
+            }
+            
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+        }
+        
+        return images
+        
+    }
+    
     
     func getScannedImages() -> Int {
-        var images = 0
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '1' OR responsestatus = '3'")
         
         do {
-            for contact in try db!.prepare(self.images!) {
-                if(Int(contact[RESPONSE_STATUS]) == 1)
-                {
-                    images=images+1
-                }
-                else if(Int(contact[RESPONSE_STATUS]) == 2)
-                {
-                    images=images+1
-                }
-                else if(Int(contact[RESPONSE_STATUS]) == 3)
-                {
-                    images=images+1
-                }
-                // deleteContact(mPath: contact[PATH])
-            }
-        } catch {
-            print("Select failed")
-        }
-        
-        return images
-    }
-
-    
-    
-    func getTotalImageCount() -> Int {
-        
-        do {
-            var x=0
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
             
-            for contact in try db!.prepare(self.images!) {
-               
-                x=x+1
-                // deleteContact(mPath: contact[PATH])
-            }
+            return result.count
             
-            return x
+            
         } catch {
-            print("Select failed")
+            let fetchError = error as NSError
+            print(fetchError)
+            return 0
         }
-        
-        return 0
     }
-    
-    
     
     func deleteContact(mPath: String) -> Bool {
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "path = '\(mPath)'")
+        
         do {
             
-            //let result = db.executeQuery("SELECT COUNT(*) FROM myTable", withArgumentsInArray: [])
+            if let result = try? self.managedObjectContext.fetch(fetchRequest) {
+                for object in result {
+                    self.managedObjectContext.delete(object as! NSManagedObject)
+                    return true
+                }
+            }
             
-            
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            for user in try (db?.prepare(contact!))! {
-                print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                // id: 1, name: Optional("Alice"), email: alice@mac.com
-            }            //rows.
-            
-            let x = try db!.run((contact?.delete())!)
-            print("Deletion done",x)
-            return true
         } catch {
             print("Delete failed")
         }
@@ -458,20 +499,24 @@ class DatabaseManagement
     func deleteContacts(mPath: [String]) -> Bool {
         do {
             
-            //let result = db.executeQuery("SELECT COUNT(*) FROM myTable", withArgumentsInArray: [])
-            
             for identifier in mPath
             {
-                let contact = self.images?.filter(PATH == identifier)
-                //db!.run(contact?.count)
-                for user in try (db?.prepare(contact!))! {
-                    print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-                    // id: 1, name: Optional("Alice"), email: alice@mac.com
-                }            //rows.
-            
-                let x = try db!.run((contact?.delete())!)
-                print("Deletion done",x)
-            
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+                fetchRequest.predicate = NSPredicate(format: "path = '\(identifier)'")
+                
+                do {
+                    
+                    if let result = try? self.managedObjectContext.fetch(fetchRequest) {
+                        for object in result {
+                            self.managedObjectContext.delete(object as! NSManagedObject)
+                            
+                        }
+                    }
+                    
+                } catch {
+                    print("Delete failed")
+                }
+                
             }
             
             return true
@@ -482,83 +527,114 @@ class DatabaseManagement
     }
     
     
-//    responsestatus ->
-//    scanned = 1
-//    not sanned = 0
-//    trash = 2
-//    recovered = 3
-    
-    //    actionStatus ->
-    //    junk = 1
-    //    not junk = -1
-    //    ignored = 2
-
-    
     func updateTrashTransaction(mPath: String,trashPath : String) -> Bool
     {
+        let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
+        let predicate = NSPredicate(format: "path = '\(mPath)'")
+        fetchRequest.predicate = predicate
         do
         {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            
-            try db?.run((contact?.update(TRASH_PATH <- trashPath))!)
-            return true
-            /* for user in try (db?.prepare(contact!))! {
-             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-             // id: 1, name: Optional("Alice"), email: alice@mac.com
-             return true
-             }*/
-            
-        }catch{
-            print("Image already present in DB")
+            let test = try self.managedObjectContext.fetch(fetchRequest)
+            if test.count == 1
+            {
+                let objectUpdate = test[0] as! NSManagedObject
+                objectUpdate.setValue(trashPath, forKey: "trashpath")                
+                do{
+                    try self.managedObjectContext.save()
+                    return true
+                }
+                catch
+                {
+                    print(error)
+                    return false
+                }
+            }
+        }
+        catch
+        {
+            print(error)
             return false
         }
         return false
     }
     
-    
     func updateRecoveryTransaction(mPath: String , identifier : String) -> Bool
     {
+        let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
+        let predicate = NSPredicate(format: "path = '\(mPath)'")
+        fetchRequest.predicate = predicate
         do
         {
-            let contact = self.images?.filter(PATH == mPath)
-            //db!.run(contact?.count)
-            
-            try db?.run((contact?.update(RESPONSE_STATUS <- "3", PATH <- identifier))!)
-            return true
-            /* for user in try (db?.prepare(contact!))! {
-             print("id: \(user[PATH]), name: \(user[RESPONSE_STATUS]), email: \(user[TRASH_PATH])")
-             // id: 1, name: Optional("Alice"), email: alice@mac.com
-             return true
-             }*/
-            
-        }catch{
-            print("Image already present in DB")
+            let test = try self.managedObjectContext.fetch(fetchRequest)
+            if test.count == 1
+            {
+                let objectUpdate = test[0] as! NSManagedObject
+                objectUpdate.setValue("3", forKey: "responsestatus")
+                objectUpdate.setValue(identifier, forKey: "path")
+                do{
+                    try self.managedObjectContext.save()
+                    return true
+                }
+                catch
+                {
+                    print(error)
+                    return false
+                }
+            }
+        }
+        catch
+        {
+            print(error)
             return false
         }
+        
         return false
     }
     
     func finishTrashTransaction(mPath: [String]) -> Bool
     {
-        do
+        var returnVal : Bool = true
+        for identifier in mPath
         {
-            for identifier in mPath
+            let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
+            let predicate = NSPredicate(format: "path = '\(identifier)'")
+            fetchRequest.predicate = predicate
+            do
             {
-                let contact = self.images?.filter(PATH == identifier)
-                //db!.run(contact?.count)
-            
-                try db?.run((contact?.update(RESPONSE_STATUS <- "2"))!)
-                
-            
+                let test = try self.managedObjectContext.fetch(fetchRequest)
+                if test.count == 1
+                {
+                    let objectUpdate = test[0] as! NSManagedObject
+                    objectUpdate.setValue("2", forKey: "responsestatus")
+                    
+                    do{
+                        try self.managedObjectContext.save()
+                        
+                        if(returnVal)
+                        {
+                            returnVal = true
+                        }
+                    }
+                    catch
+                    {
+                        print(error.localizedDescription)
+                        returnVal = false
+                    }
+                }
             }
-            return true
+            catch
+            {
+                print(error)
+                returnVal = false
+            }
             
-        }catch{
-            print("Trash Transation finished")
-            return false
         }
-        return false
+        return returnVal
+        
     }
+    
+    
+    
+    
     
 }

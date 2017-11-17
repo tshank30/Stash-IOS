@@ -200,7 +200,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="H37-Ut-SZe">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="9E3-MI-3hj">
-                                <rect key="frame" x="321" y="8" width="73" height="28"/>
+                                <rect key="frame" x="354" y="8" width="40" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="trashIcon">
                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -472,7 +472,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="KGs-dp-jtM">
                                     <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="50" height="100"/>
+                                    <size key="headerReferenceSize" width="50" height="70"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
@@ -483,7 +483,7 @@
                                 </view>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="review_cell" id="Xmh-ZB-DTx" customClass="ReviewCollectionViewCell" customModule="NewProject" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="100" width="50" height="50"/>
+                                        <rect key="frame" x="0.0" y="70" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -528,48 +528,23 @@
                                     </collectionViewCell>
                                 </cells>
                                 <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="Header" id="s1y-VZ-p2Z" customClass="HCollectionReusableView" customModule="NewProject" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="404" height="100"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="404" height="70"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BPf-D3-PP4">
-                                            <rect key="frame" x="8" y="10" width="95" height="44"/>
+                                            <rect key="frame" x="8" y="13.666666666666664" width="95" height="43"/>
                                             <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="36"/>
                                             <color key="textColor" red="0.24217715859413147" green="0.26991888880729675" blue="0.31151175498962402" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wxl-4E-1J9">
-                                            <rect key="frame" x="0.0" y="60" width="404" height="30"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning more images in background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qO8-of-XSC">
-                                                    <rect key="frame" x="10" y="0.0" width="404" height="30"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" red="0.85408049821853638" green="0.87805849313735962" blue="0.90714198350906372" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <constraints>
-                                                <constraint firstItem="qO8-of-XSC" firstAttribute="width" secondItem="Wxl-4E-1J9" secondAttribute="width" id="5xb-Yf-4cy"/>
-                                                <constraint firstItem="qO8-of-XSC" firstAttribute="height" secondItem="Wxl-4E-1J9" secondAttribute="height" id="gCz-bI-MNE"/>
-                                                <constraint firstAttribute="height" constant="30" id="ivr-g5-mNw"/>
-                                                <constraint firstItem="qO8-of-XSC" firstAttribute="leading" secondItem="Wxl-4E-1J9" secondAttribute="leading" constant="10" id="o6Z-9z-Lwp"/>
-                                                <constraint firstItem="qO8-of-XSC" firstAttribute="top" secondItem="Wxl-4E-1J9" secondAttribute="top" id="tAj-v3-rvb"/>
-                                            </constraints>
-                                        </view>
                                     </subviews>
                                     <gestureRecognizers/>
                                     <constraints>
-                                        <constraint firstItem="Wxl-4E-1J9" firstAttribute="leading" secondItem="s1y-VZ-p2Z" secondAttribute="leading" id="2BZ-EI-Ua5"/>
                                         <constraint firstItem="BPf-D3-PP4" firstAttribute="leading" secondItem="s1y-VZ-p2Z" secondAttribute="leadingMargin" id="4Kz-jF-8Jd"/>
-                                        <constraint firstAttribute="bottom" secondItem="Wxl-4E-1J9" secondAttribute="bottom" constant="10" id="JAb-Sz-9zN"/>
-                                        <constraint firstItem="BPf-D3-PP4" firstAttribute="top" secondItem="s1y-VZ-p2Z" secondAttribute="top" constant="10" id="JoU-Eg-z46"/>
-                                        <constraint firstItem="Wxl-4E-1J9" firstAttribute="top" secondItem="BPf-D3-PP4" secondAttribute="bottom" constant="6" id="Zt9-Mv-VpL"/>
-                                        <constraint firstItem="Wxl-4E-1J9" firstAttribute="width" secondItem="s1y-VZ-p2Z" secondAttribute="width" id="tpR-HZ-Y66"/>
+                                        <constraint firstItem="BPf-D3-PP4" firstAttribute="centerY" secondItem="s1y-VZ-p2Z" secondAttribute="centerY" id="O3M-DQ-S8d"/>
                                     </constraints>
                                     <connections>
-                                        <outlet property="headerScanningView" destination="Wxl-4E-1J9" id="4Pa-eU-LPN"/>
                                         <outlet property="headerText" destination="BPf-D3-PP4" id="QLH-NJ-Dkl"/>
-                                        <outlet property="scanningViewHeight" destination="ivr-g5-mNw" id="ZSz-WI-V5o"/>
                                     </connections>
                                 </collectionReusableView>
                                 <connections>
@@ -594,8 +569,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9a6-vU-CDf" userLabel="Scanning container">
                                 <rect key="frame" x="0.0" y="64" width="414" height="40"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning more images in background…" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NQG-Xd-SRX" userLabel="Scanningtxt">
-                                        <rect key="frame" x="5" y="0.0" width="285" height="40"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning images in background..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NQG-Xd-SRX" userLabel="Scanningtxt">
+                                        <rect key="frame" x="5" y="0.0" width="244.33333333333334" height="40"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </label>
@@ -648,8 +623,9 @@
                     <connections>
                         <outlet property="collectionView" destination="onz-jl-OLF" id="Uza-ue-ynK"/>
                         <outlet property="deleteBtn" destination="Kty-DC-5a8" id="ZuC-gq-jWJ"/>
+                        <outlet property="scanningText" destination="NQG-Xd-SRX" id="b6t-if-HrB"/>
                         <outlet property="scanningView" destination="9a6-vU-CDf" id="xzR-Gs-66h"/>
-                        <outlet property="scanningViewHeightConstraint" destination="NVs-d3-ytI" id="jmg-s9-meQ"/>
+                        <outlet property="scanningViewHeightConstraint" destination="NVs-d3-ytI" id="PFu-Rj-bq8"/>
                         <outlet property="selectAllBtn" destination="wzf-cx-4Hg" id="Wo4-jO-1hm"/>
                         <outlet property="selectedText" destination="1aq-he-oiG" id="0St-H6-3fK"/>
                         <segue destination="FWU-u8-IcI" kind="show" identifier="PhotoZoom" id="1zI-F6-eSI"/>

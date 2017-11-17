@@ -21,10 +21,12 @@ protocol ReviewDelegate {
 class ReviewViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate,VCImageZoomDelegate {
     
     
+    @IBOutlet weak var scanningText: UILabel!
     @IBOutlet weak var deleteBtn: UIButton!
     @IBOutlet weak var scanningView : UIView!
     // @IBOutlet weak var scanningView: UIView!
-    @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
+    //@IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
+       @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
     
     var scanningOn : Bool = false
     var photoZoomIdentifier : String!
@@ -181,16 +183,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         yourCellInterItemSpacing=3
         
-        if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
-        {
-            refreshScreen()
-            scanningOn=true
-        }
-        else
-        {
-            scanningViewHeightConstraint.constant = 0
-            scanningOn=false
-        }
+       
         
         let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is
         layout?.minimumLineSpacing = 4
@@ -204,6 +197,22 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         dataModel=[ImageModel]()
         newDataModel=getData()
         
+        if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
+        {
+            refreshScreen()
+            scanningOn=true
+        }
+        else
+        {
+            scanningViewHeightConstraint.constant = 0
+            scanningOn=false
+            if(newDataModel?.count==0)
+            {
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+        }
+        
         self.deleteBtn.layer.cornerRadius = 8
         
         selectAll(select: true)
@@ -213,16 +222,16 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         // Do any additional setup after loading the view.
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreen, label: "\(String(describing: dataModel?.count))")
+        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesSuggestedOnReviewScreen, label: "\(String(describing: dataModel?.count))")
+        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesSuggestedOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
         
         
         if(Preferences.shared.getFirstTimePreference()==false)
         {
             GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.totalNoOfImages, label: "\(DatabaseManagement.shared.getTotalImageCount())")
             
-            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: dataModel?.count))")
+            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: newDataModel?.count))")
             
             Preferences.shared.setfistTimePreference()
         }
@@ -239,6 +248,8 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         lpgr.delegate = self
         lpgr.delaysTouchesBegan = true
         self.collectionView?.addGestureRecognizer(lpgr)
+        
+        
         
     }
     
@@ -317,17 +328,25 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                         self.allSelected=false
                     }
                     
+                    self.scanningText.text="Scanning images in background (\(scannedImages)/\(totalImages))"
+                    
+                    
                     self.checkUncheckAllBtn()
                     
                     if(scannedImages==totalImages)
                     {
                         self.refresh=false
                         self.scanningViewHeightConstraint.constant = 0
-                        self.scanningOn=true
+                        self.scanningOn=false
+                        
+                        if(self.dataModel?.count==0)
+                        {
+                            self.navigationController?.popViewController(animated: true)
+                        }
                     }
                     else
                     {
-                        self.scanningOn=false
+                        self.scanningOn=true
                     }
                     
                      self.collectionView.reloadData()
@@ -421,13 +440,13 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             headerView.headerText.text = "\(dataModel?.count ?? 0) Junk Images"
             
-            if(scanningOn)
-            {
-                headerView.scanningViewHeight.constant=30
-            }
-            else{
-                headerView.scanningViewHeight.constant=0
-            }
+//            if(scanningOn)
+//            {
+//                headerView.scanningViewHeight.constant=30
+//            }
+//            else{
+//                headerView.scanningViewHeight.constant=0
+//            }
             //headerView.backgroundColor = UIColor.blue;
             return headerView
             
@@ -531,7 +550,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func getData() -> [ImageModel]?
     {
-        dataModel=DatabaseManagement.shared.getContacts()
+        dataModel=DatabaseManagement.shared.getJunkImages()
         return dataModel
     }
     

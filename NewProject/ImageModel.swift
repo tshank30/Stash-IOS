@@ -15,7 +15,7 @@ class ImageModel
     private var mResponseStatus : Int = 0;
     private var mActionStatus : Int = 0;
     private var mTrashPath : String = "";
-    private var fileSize : Int16 = 0;
+    private var fileSize : Int64 = 0;
     private var score : String = "" ;
     private var imageType : String = "";
     private var checked : Bool;
@@ -126,6 +126,16 @@ class ImageModel
     {
         return self.asset!
         
+    }
+    
+    func setFileSize(fileSize : Int64)
+    {
+        self.fileSize=fileSize
+    }
+    
+    func getFileSize() -> Int64
+    {
+        return self.fileSize
     }
 
     

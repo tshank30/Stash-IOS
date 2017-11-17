@@ -9,6 +9,7 @@
 import UIKit
 import Photos
 import UserNotifications
+import CoreData
 
 class SplashViewController: UIViewController {
     
@@ -17,9 +18,16 @@ class SplashViewController: UIViewController {
     var queue:OperationQueue? = nil
     static var logsPath : URL?
     var trashPath : String?
-    let myGroup = DispatchGroup()
+    //let myGroup = DispatchGroup()
     var semaphore : DispatchSemaphore?
+    var fileseizeSemaphore : DispatchSemaphore?
+    
     var request=0;
+    var present=false
+    var allImages : [String]!
+    
+    var myOpQueue : OperationQueue!
+    
     
     
     override func viewDidLoad() {
@@ -29,17 +37,15 @@ class SplashViewController: UIViewController {
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.runCount, custDimVal: Preferences.shared.setRunCountPreference())
         
         
+        myOpQueue = OperationQueue()
+        myOpQueue.maxConcurrentOperationCount = 4
         
+        semaphore = DispatchSemaphore(value: 0)
         
-        
-        
-        //        let content = UNMutableNotificationContent()
-        //        content.title = "Don't forget"
-        //        content.body = "Buy some milk"
-        //        content.sound = UNNotificationSound.default()
-        //
-        //        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 300,
-        //                                                        repeats: false)
+        //        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        //        appDelegate.save(name: "Akshit")
+        //        appDelegate.save(name: "Ankit")
+        //        appDelegate.fetch()
         
         // Do any additional setup after loading the view.
     }
@@ -91,36 +97,33 @@ class SplashViewController: UIViewController {
         queue = OperationQueue()
         queue?.maxConcurrentOperationCount = 1;
         
-        
-        
-        
-        let urlWhats = "whatsapp://send?phone=+918826756265&abid=12354&text=Hello"
-        if let urlString = urlWhats.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
-            if let whatsappURL = URL(string: urlString) {
-                DispatchQueue.main.async (execute: {
-                    
-                        if UIApplication.shared.canOpenURL(whatsappURL) {
-                            
-                            DispatchQueue.global(qos:.background).async {
-                                self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
-                            }
-                            
-                            
-                        } else {
-                            
-                            DispatchQueue.global(qos:.background).async {
-                                self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
-                                print("Install Whatsapp")
-                            }
-                            
-                        }
-                    
-                })
+        DispatchQueue.global(qos:.background).async {
+            
+            let dateFormatter = DateFormatter()
+            let requestedComponent: Set<Calendar.Component> = [.year,.month,.day,.hour,.minute,.second]
+            let userCalendar = Calendar.current
+            
+            
+            dateFormatter.dateFormat = "ddMMyyhhmmss"
+            let timeRightNow  = Date()
+            let timeRightNowResult = dateFormatter.string(from: timeRightNow)
+            
+            self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
+            
+            let timePrevious  = Preferences.shared.getDayTimePreference()
+            let startTime = dateFormatter.date(from: timePrevious)
+            
+            let timeRightNow2  = Date()
+            let timeRightNowResult2 = dateFormatter.string(from: timeRightNow2)
+            
+            if timeRightNow2 != nil {
+                
+                let timeDifference = userCalendar.dateComponents(requestedComponent, from: timeRightNow, to: timeRightNow2)
+                
+                print("execution time",timeDifference.second)
             }
+            //print("Install Whatsapp")
         }
-        
-        
-        
         
     }
     
@@ -149,109 +152,205 @@ class SplashViewController: UIViewController {
         let options = PHFetchOptions()
         // Bug from Apple since 9.1, use workaround
         //options.predicate = NSPredicate(format: "title = %@", albumName)
-        options.sortDescriptors = [ NSSortDescriptor(key: "creationDate", ascending: true) ]
+        options.sortDescriptors = [ NSSortDescriptor(key: "pixelWidth", ascending: true)  ]
         
-        let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        //var collection: PHFetchResult<AnyObject>
+        let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         
         var j=0
         var openView=true
         
-        if(albumName != "WhatsApp")
-        {
-            fetchAll=true
-        }
-        let myOpQueue = OperationQueue()
-        myOpQueue.maxConcurrentOperationCount = 4
+        allImages?.removeAll()
+        allImages=DatabaseManagement.shared.getAllImages();
         
-        semaphore = DispatchSemaphore(value: 0) // DispatchSemaphore(value: 0)
+        print("total images \(allImages?.count)")
+        
+        
+        // DispatchSemaphore(value: 0)
         
         print("Photo count",collection.count)
         if( collection.count > 0)
         {
+            var assets = [PHAsset]()
             for k in 0 ..< collection.count {
                 let obj:AnyObject! = collection.object(at: k)
-                if (obj.title == albumName  || fetchAll ) {
-                    if let assCollection = obj as? PHAssetCollection {
-                        let results = PHAsset.fetchAssets(in: assCollection, options: options)
-                        var assets = [PHAsset]()
+                //if (obj.title == albumName  || fetchAll ) {
+                if let assCollection = obj as? PHAssetCollection {
+                    let results = PHAsset.fetchAssets(in: assCollection, options: options)
+                    
+                    
+                    print("enumeration started")
+                    results.enumerateObjects({ (obj, index, stop) in
                         
-                        results.enumerateObjects({ (obj, index, stop) in
+                        if let asset = obj as? PHAsset {
                             
-                            if let asset = obj as? PHAsset {
+                            if asset.mediaType == .image{
+                                assets.append(asset)
                                 
-                                if asset.mediaType == .image{
-                                    assets.append(asset)
-                                    
-                                    asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
-                                        if let input = eidtingInput, let imgURL = input.fullSizeImageURL {
-                                            // imgURL
-                                            
-                                            // DispatchQueue.global(qos: .userInitiated).async { // 1
-                                            j=j+1
-                                            print(imgURL)
-                                            let img=ImageModel()
-                                            img.setPath(mPath: imgURL)
-                                            img.setIdentifier(identifier: asset.localIdentifier)
-                                            img.setChecked(checked: false)
-                                            img.setResponseStatus(mResponseStatus: 0)
-                                            img.setActionStatus(status: 0)
-                                            
-                                            // self.images?.append(img)
-                                            
-                                            //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
-                                            //print("total images in DB ",self.images?.count ?? "nothing in DB")
-                                            DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                            
-                                            if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
-                                            {
-                                                self.myGroup.enter()
-                                                myOpQueue.addOperation{
-                                                    
-                                                    self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: imgURL.lastPathComponent)
-                                                    
-                                                    
-                                                }
-                                            }
-                                            
-                                            DispatchQueue.main.async { // 2
-                                                //self.fadeInNewImage(overlayImage) // 3
-                                                print("Total Photos",  self.asset?.count ?? "No Photos in whatsapp")
-                                                
-                                                print("Photos added", j)
-                                                if(openView && j==assets.count)
-                                                {
-                                                    openView=false
-                                                    self.dismiss(animated: true, completion: nil)
-                                                    self.performSegue(withIdentifier: "HomeScreen", sender: nil)
-                                                    
-                                                }
-                                                
-                                            }
+                                
+                                //assets.index(of: asset)
+                                
+                                j=j+1
+                                print("Identifier gallery",asset.localIdentifier)
+                                let img=ImageModel()
+                                //img.setPath(mPath: imgURL)
+                                img.setPath(mPath:  URL(string: "https://www.apple.com")!)
+                                img.setIdentifier(identifier: asset.localIdentifier)
+                                img.setChecked(checked: false)
+                                img.setResponseStatus(mResponseStatus: 0)
+                                img.setActionStatus(status: 0)
+                                //img.setFileSize()
+                                
+                                
+                                
+                                
+                                // self.images?.append(img)
+                                
+                                //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
+                                //print("total images in DB ",self.images?.count ?? "nothing in DB")
+                                let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
+                                
+                                if(present)
+                                {
+                                    do
+                                    {
+                                        if let index = try self.allImages.index(of: asset.localIdentifier)
+                                        {
+                                            try  self.allImages.remove(at: index)
                                         }
+                                        else
+                                        {
+                                            print("image not present")
+                                        }
+                                        
+                                    }
+                                    catch{
+                                        print("error ",error.localizedDescription)
+                                    }
+                                }
+                                else
+                                {
+                                    print("image inserted ",j)
+                                    DatabaseManagement.shared.updateFileSize(fileSize: self.getSizeFromIdentifier(identifier: asset.localIdentifier),mPath: asset.localIdentifier)
+                                }
+                                
+                                
+                                if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                {
+                                    //self.myGroup.enter()
+                                    self.myOpQueue.addOperation{
+                                        
+                                        self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                        
+                                        
                                     }
                                 }
                                 
+                                print("enumeration")
+                                
+                                
+                                
+                                
+                                
+                                //                                    asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
+                                //                                        if let input = eidtingInput, let imgURL = input.fullSizeImageURL
+                                //                                    }
                             }
                             
-                            //}
-                        })
-                        
-                        myGroup.notify(queue: .main) {
-                            print("Finished all requests.")
                         }
                         
-                        //initalaizeUrls(assets: assets)
-                        print("returning asset")
-                        return assets
-                    }
+                        print("enumeration asset")
+                        
+                        //}
+                    })
+                    
+                    //                        myGroup.notify(queue: .main) {
+                    //                            print("Finished all requests.")
+                    //                        }
+                    
+                    //initalaizeUrls(assets: assets)
+                    print("enumeration returning asset")
+                    
+                    
+                    
+                    
                 }
+                // }
             }
+            
+            
+            //            var i=0
+            //            let imageModels:[ImageModel]=DatabaseManagement.shared.getNotScannedAssets()
+            //
+            //            for imgMod in imageModels
+            //            {
+            //                print("imageSizeScanned \(imgMod.getFileSize())")
+            //                self.myOpQueue.addOperation{
+            //                    self.UploadRequest(image: self.getAssetThumbnail(asset: imgMod.getPHAsset()),mPath : imgMod.getIdentifier(),filename: "image \(i)")
+            //                }
+            //
+            //                i=i+1;
+            //            }
+            
+            
+            DispatchQueue.main.async { // 2
+                //self.fadeInNewImage(overlayImage) // 3
+                print("Total Photos",  self.asset?.count ?? "No Photos in whatsapp")
+                
+                print("Photos added", j)
+                if(openView && j==assets.count)
+                {
+                    DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
+                    self.allImages?.removeAll()
+                    openView=false
+                    
+                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
+                    
+                    self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+                    
+                }
+                
+            }
+            
+            //            if(assets.count==0)
+            //            {
+            //                self.navigationController?.popViewController(animated: true)
+            //                self.dismiss(animated: true, completion: nil)
+            //                self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+            //            }
+            
+            
+            
+            
+            
+            
+            return assets
         }
         else{
-            self.dismiss(animated: true, completion: nil)
-            self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+            
+            //            var i=0
+            //            let imageModels:[ImageModel]=DatabaseManagement.shared.getNotScannedAssets()
+            //
+            //            for imgMod in imageModels
+            //            {
+            //                 print("imageSizeScanned \(imgMod.getFileSize())")
+            //                self.myOpQueue.addOperation{
+            //                    self.UploadRequest(image: self.getAssetThumbnail(asset: imgMod.getPHAsset()),mPath : imgMod.getIdentifier(),filename: "image \(i)")
+            //                }
+            //
+            //                i=i+1;
+            //            }
+            
+            DispatchQueue.main.async {
+                
+                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
+                
+                self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+            }
         }
-        print("returning emmty asset")
+        print("returning empty asset")
         return [PHAsset]()
     }
     
@@ -338,7 +437,12 @@ class SplashViewController: UIViewController {
             let settingsUrl = NSURL(string:UIApplicationOpenSettingsURLString)
             if let url = settingsUrl {
                 GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermmisionSettingScreen)
-                UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+                } else {
+                    // Fallback on earlier versions
+                }
+                
             }
         }
         //let cancelAction = UIAlertAction(title: "Okay", style: .default, handler: nil)
@@ -376,7 +480,7 @@ class SplashViewController: UIViewController {
         var url : NSURL?
         
         url = NSURL(string:"http://223.165.30.63:8002/")
-     
+        
         let request = NSMutableURLRequest(url: url! as URL)
         request.httpMethod = "POST"
         
@@ -478,31 +582,9 @@ class SplashViewController: UIViewController {
                 print("Error deserializing JSON: \(error)")
             }
             
-            
-            
-            
-            //            var dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-            //            print(dataString ?? "No Data")
-            //
-            //            let fullNameArr=dataString?.components(separatedBy: " ")
-            //            if((fullNameArr?.count)!>3)
-            //            {
-            //                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
-            //                print("junk insertion :", result)
-            //
-            //            }
-            //            else{
-            //                let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
-            //                print("non junk insertion :", result)
-            //
-            //            }
-            
             self.semaphore?.signal()
-            //semaphore.wait
-            
-            //self.resultsLabel.text = dataString! as String
-            
         }
+        
         
         task.resume()
         
@@ -678,6 +760,44 @@ class SplashViewController: UIViewController {
             print("Trash images :",file)
             
         }
+        
+    }
+    
+    func getSizeFromIdentifier(identifier : String) -> Int64
+    {
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)[0]
+        let resources = PHAssetResource.assetResources(for: assets) // your PHAsset
+        
+        var sizeOnDisk: Int64? = 0
+        
+        if let resource = resources.first {
+            let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong
+            sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64!))
+            
+            print("Imagesize resourse \(sizeOnDisk!)")
+        }
+        //        guard let asset = assets.firstObject
+        //            else
+        //        {
+        //            fatalError("no asset")
+        //        }
+        //        var imageSize=0
+        //        let manager = PHImageManager.default()
+        //        manager.requestImageData(for: assets, options: nil) { (data:Data?, string:String?, orientation:UIImageOrientation, object:[AnyHashable : Any]!) -> Void in
+        //
+        //            imageSize = (data?.count)!
+        //
+        //
+        //            //Transform into Kb
+        //            imageSize = imageSize/(1024)
+        //
+        //            print("Imagesize \(imageSize)")
+        //
+        //
+        //
+        //        }
+        let size=sizeOnDisk!
+        return size
         
     }
     

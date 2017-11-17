@@ -96,25 +96,19 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         navigationController?.navigationBar.tintColor = UIColor.white
         
         
-        let junkNumb = DatabaseManagement.shared.getContacts().count
-        junkNumber.text=String(junkNumb)
-        if(junkNumb != 0)
-        {
-            self.scanBtn.isEnabled=true
-            self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
-            self.scanBtn.layer.cornerRadius = 8
-            self.scanBtn.layer.borderWidth = 1
-            self.scanBtn.layer.borderColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0).cgColor
-            self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
-            
-        }else{
-            self.scanBtn.isEnabled=false
-            self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0xdae0e7)
-            self.scanBtn.layer.cornerRadius = 8
-            self.scanBtn.layer.borderWidth = 1
-            self.scanBtn.layer.borderColor = UIColor.init(red:218/255.0, green:224/255.0, blue:231/255.0, alpha: 1.0).cgColor
-            self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
-        }
+        self.totalImages = DatabaseManagement.shared.getTotalImageCount()
+        //let junkNumb = DatabaseManagement.shared.getContacts().count
+        
+        junkNumber.text=String(totalImages)
+        self.junkPhotoFound.text = "Photos Found"
+        
+        self.scanBtn.isEnabled=true
+        self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
+        self.scanBtn.layer.cornerRadius = 8
+        self.scanBtn.layer.borderWidth = 1
+        self.scanBtn.layer.borderColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0).cgColor
+        self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+        
         
         
         let dateFormatter = DateFormatter()
@@ -178,10 +172,10 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
             //Preferences.shared.setDayCountDimension()
             GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.dayCount, custDimVal:  Preferences.shared.setDayCountDimension())
         }
-     
+        
         
         backgroundDbCall(callRefresh: false)
-        refreshScreen()
+        //refreshScreen()
         
     }
     
@@ -189,13 +183,15 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     func backgroundDbCall(callRefresh :Bool)
     {
         var junkCount=0
-        //var scannedImages = 0
-        //var totalImages = 0
+        var scannedImages = 0
+        var totalImages = 0
         DispatchQueue.global(qos:.background).async {
             
-            junkCount =  DatabaseManagement.shared.getContacts().count
-            self.scannedImages =  DatabaseManagement.shared.getScannedImages()
-            self.totalImages = DatabaseManagement.shared.getTotalImageCount()
+            junkCount =  DatabaseManagement.shared.getJunkImagesCount()
+            scannedImages = DatabaseManagement.shared.getScannedImages()
+            totalImages = DatabaseManagement.shared.getTotalImageCount()
+            self.scannedImages =  scannedImages
+            self.totalImages = totalImages
             
             
             DispatchQueue.main.async(execute: {
@@ -224,33 +220,34 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     self.scanBtn.isEnabled=false
                     self.homeBkgImage.image=UIImage(named:"no_junk_bkg")
                     
-                    self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
+                    self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0xdae0e7)
                     self.scanBtn.layer.cornerRadius = 8
                     self.scanBtn.layer.borderWidth = 1
                     self.scanBtn.layer.borderColor = UIColor.init(red:218/255.0, green:224/255.0, blue:231/255.0, alpha: 1.0).cgColor
                     
                     self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
                 }
-                else if(junkCount==0)
-                {
-                    self.junkFoundView.isHidden=false
-                    // self.scanningView.isHidden=false
-                    self.junkNumber.text="Scanning"
-                    self.junkPhotoFound.text = "Images"
-                    self.scanBtn.isEnabled=false
-                    self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0xdae0e7)
-                    self.scanBtn.layer.cornerRadius = 8
-                    self.scanBtn.layer.borderWidth = 1
-                    self.scanBtn.layer.borderColor = UIColor.init(red:218/255.0, green:224/255.0, blue:231/255.0, alpha: 1.0).cgColor
-                    self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
-                }
+//                else if(junkCount==0)
+//                {
+//                    self.junkFoundView.isHidden=false
+//                    // self.scanningView.isHidden=false
+//                    self.junkNumber.text="Scanning"
+//                    self.junkPhotoFound.text = "Images"
+//                    self.scanBtn.isEnabled=true
+//                    self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
+//                    self.scanBtn.layer.cornerRadius = 8
+//                    self.scanBtn.layer.borderWidth = 1
+//                    self.scanBtn.layer.borderColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0).cgColor
+//                    self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
+//                }
                 else
                 {
                     self.junkFoundView.isHidden=false
                     //self.scanningView.isHidden=true
-                    self.junkNumber.text=String(junkCount)
-                    self.junkPhotoFound.text = "Junk Photos Found"
+                    self.junkNumber.text=String(self.totalImages)
+                    self.junkPhotoFound.text = "Photos Found"
                     self.scanBtn.isEnabled=true
+                    self.homeBkgImage.image=UIImage(named:"home_ghost")
                     
                     self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
                     self.scanBtn.layer.cornerRadius = 8
@@ -259,16 +256,14 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
                     
                 }
-            
+                
                 if(callRefresh)
                 {
                     if(self.scannedImages==self.totalImages)
                     {
                         self.refresh=false
-                        //self.scanningViewHeightConstraint.constant = 0
-                        //self.scanningView.isHidden=true
                     }
-            
+                    
                     if(self.refresh==true)
                     {
                         self.refreshScreen()
@@ -292,13 +287,13 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     override func viewDidAppear(_ animated: Bool) {
         
         self.backgroundDbCall(callRefresh: false)
-        
         GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
+        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-         print("Memory warning")
+        print("Memory warning")
         // Dispose of any resources that can be recreated.
     }
     

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13533" systemVersion="16G29" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Images" representedClassName="Images" syncable="YES" codeGenerationType="class">
+        <attribute name="actionstatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="analyser" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="filesize" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imagepath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imagetype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastmodifieddate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="path" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="responsestatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="score" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tags" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="trashpath" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Images" positionX="-63" positionY="-18" width="128" height="225"/>
+    </elements>
+</model>

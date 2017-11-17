@@ -215,7 +215,7 @@ class CollectionViewController: UICollectionViewController{
     
     func getData() -> [ImageModel]?
     {
-        dataModel=DatabaseManagement.shared.getContacts()
+        dataModel=DatabaseManagement.shared.getJunkImages()
         return dataModel
     }
     
