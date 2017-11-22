@@ -18,6 +18,7 @@ class Preferences
     static let shared:Preferences=Preferences()
     var preferences : UserDefaults
     let firstTimeKey = "FirstTime"
+    let firstTimeInsertion = "FirstTimeInsertion"
     let dayCountKey = "DayCount"
     let runCount = "FirstTime"
     let resultScreen = "ResultScreen"
@@ -33,7 +34,17 @@ class Preferences
         preferences.set(true, forKey : firstTimeKey)
     }
     
+    func setFirstTimeInsertionPreference()
+    {
+        preferences.set(true, forKey : firstTimeInsertion)
+    }
+    
     func getFirstTimePreference() -> Bool
+    {
+        return (preferences.object(forKey: firstTimeInsertion) != nil)
+    }
+    
+    func getFirstTimeInsertionPreference() -> Bool
     {
         return (preferences.object(forKey: firstTimeKey) != nil)
     }

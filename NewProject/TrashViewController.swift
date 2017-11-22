@@ -84,8 +84,11 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.imagesRestore, label: "\(String(describing: deletionSet?.count))")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+             DatabaseManagement.shared.serialQueue.sync {
             self.dataModel=self.getData()
-            self.collectionView.reloadData()
+                self.collectionView.reloadData()
+            }
+            
         })
         // self.navigationController?.popViewController(animated: true)
         // self.dismiss(animated: true, completion: nil)
@@ -102,8 +105,10 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             self.deleteFolderContent(folderPath: URL(string: imageLocation)!)
             //if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
             
-            
-            DatabaseManagement.shared.deleteContact(mPath: deletionMap[imagePath]!)
+            DatabaseManagement.shared.serialQueue.sync {
+                  DatabaseManagement.shared.deleteContact(mPath: deletionMap[imagePath]!)
+            }
+          
             
         }
         
@@ -112,8 +117,10 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.permanentDeletion, label: "\(String(describing: deletionSet?.count))")
         
         deletionSet?.removeAll()
+         DatabaseManagement.shared.serialQueue.sync {
         dataModel=getData()
         collectionView.reloadData()
+        }
         
         //self.navigationController?.popViewController(animated: true)
         //self.dismiss(animated: true, completion: nil)
@@ -208,7 +215,9 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         deletionSet=[String]()
         
+         DatabaseManagement.shared.serialQueue.sync {
         dataModel=getData()
+        }
         
         self.restoreBtn.layer.cornerRadius = 8
         self.deletePermanently.layer.cornerRadius = 8

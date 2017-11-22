@@ -96,7 +96,9 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         navigationController?.navigationBar.tintColor = UIColor.white
         
         
+         DatabaseManagement.shared.serialQueue.sync() {
         self.totalImages = DatabaseManagement.shared.getTotalImageCount()
+        }
         //let junkNumb = DatabaseManagement.shared.getContacts().count
         
         junkNumber.text=String(totalImages)
@@ -187,9 +189,18 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         var totalImages = 0
         DispatchQueue.global(qos:.background).async {
             
+             DatabaseManagement.shared.serialQueue.sync() {
             junkCount =  DatabaseManagement.shared.getJunkImagesCount()
+            }
+             DatabaseManagement.shared.serialQueue.sync() {
             scannedImages = DatabaseManagement.shared.getScannedImages()
+            }
+            
+             DatabaseManagement.shared.serialQueue.sync() {
             totalImages = DatabaseManagement.shared.getTotalImageCount()
+            }
+            
+             DatabaseManagement.shared.serialQueue.sync() {
             self.scannedImages =  scannedImages
             self.totalImages = totalImages
             
@@ -270,6 +281,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     }
                 }
             })
+            }
         }
     }
     

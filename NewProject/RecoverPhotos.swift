@@ -88,10 +88,17 @@ class RecoverPhotos: NSObject {
                 
             }, completionHandler: { (success,error) -> Void in
                 
-                if(success && DatabaseManagement.shared.updateRecoveryTransaction(mPath: identifier , identifier : localIdentifier)==true)
-                {
-                    
+                // Using GCD
+                
+              
+                
+                DatabaseManagement.shared.serialQueue.sync() {
+                    if(success && DatabaseManagement.shared.updateRecoveryTransaction(mPath: identifier , identifier : localIdentifier)==true)
+                    {
+                        
+                    }
                 }
+                
                 
                 //let x=assetPlaceHolder?.localIdentifier
             })

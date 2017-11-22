@@ -215,7 +215,9 @@ class CollectionViewController: UICollectionViewController{
     
     func getData() -> [ImageModel]?
     {
+         DatabaseManagement.shared.serialQueue.sync() {
         dataModel=DatabaseManagement.shared.getJunkImages()
+        }
         return dataModel
     }
     

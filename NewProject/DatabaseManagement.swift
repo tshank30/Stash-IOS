@@ -15,6 +15,9 @@ class DatabaseManagement
     static let shared:DatabaseManagement=DatabaseManagement()
     private var managedObjectContext: NSManagedObjectContext;
     
+    public var serialQueue :DispatchQueue
+    
+    
     //    responsestatus ->
     //    scanned = 1
     //    not sanned = 0
@@ -30,7 +33,13 @@ class DatabaseManagement
     {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.managedObjectContext = appDelegate.managedObjectContext
+        serialQueue = DispatchQueue(label: "stash.coredata.queue")
     }
+    
+//    func getQueue()->DispatchQueue
+//    {
+//        return serialQueue
+//    }
     
     
     func getNotScannedAssets() -> [ImageModel]
@@ -111,7 +120,7 @@ class DatabaseManagement
     func isPresent(mPath: String) -> Bool
     {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
-        fetchRequest.predicate = NSPredicate(format: "path == %@", mPath)
+        fetchRequest.predicate = NSPredicate(format: "path = '\(mPath)'")
         
         do {
             let result = try self.managedObjectContext.fetch(fetchRequest)
@@ -184,15 +193,32 @@ class DatabaseManagement
             let person = NSManagedObject(entity: entity,
                                          insertInto: managedContext)
             
+            print("identifier",img.getIdentifier())
+            print("path ",String(describing: img.getPath()))
+            print("response status ",String(describing: img.getResponseStatus()))
+            print("Trash Path ",img.getTrashPath())
+            print("action status ",String(describing:img.getActionStatus()))
+            
+            
             // 3
             person.setValue(img.getIdentifier(), forKeyPath: "path")
             person.setValue(String(describing: img.getPath()), forKeyPath: "imagepath")
             person.setValue(String(describing: img.getResponseStatus()), forKeyPath: "responsestatus")
             person.setValue(img.getTrashPath(), forKeyPath: "trashpath")
             person.setValue(String(describing:img.getActionStatus()), forKeyPath: "actionstatus")
+            person.setValue(String(getSizeFromIdentifier(identifier: img.getIdentifier())), forKeyPath: "filesize")
             
             
+           // person.isInserted
             // 4
+//            if !person.isInserted {
+//                managedContext.insert(person)
+//                print("inserted")
+//            }
+//            else{
+//                 print("not inserted")
+//            }
+            
             do {
                 try managedContext.save()
                 //people.append(person)
@@ -630,6 +656,24 @@ class DatabaseManagement
             
         }
         return returnVal
+        
+    }
+    
+    func getSizeFromIdentifier(identifier : String) -> Int64
+    {
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)[0]
+        let resources = PHAssetResource.assetResources(for: assets) // your PHAsset
+        
+        var sizeOnDisk: Int64? = 0
+        
+        if let resource = resources.first {
+            let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong
+            sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64!))
+            
+            print("Imagesize resourse \(sizeOnDisk!)")
+        }
+        let size=sizeOnDisk!
+        return size
         
     }
     

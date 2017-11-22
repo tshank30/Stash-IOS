@@ -106,8 +106,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                             {
                                 //DatabaseManagement.shared.deleteContacts(mPath: self.deletionSet!)
                                 
+                                 DatabaseManagement.shared.serialQueue.sync() {
                                 DatabaseManagement.shared.finishTrashTransaction(mPath: self.deletionSet!)
-                                
+                                }
                                 DispatchQueue.main.async {
                                     // Update UI
                                     //self.navigationController?.popViewController(animated: true)
@@ -195,8 +196,11 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         deletionSet=[String]()
         dataModel=[ImageModel]()
+        DatabaseManagement.shared.serialQueue.sync() {
         newDataModel=getData()
+        }
         
+         DatabaseManagement.shared.serialQueue.sync() {
         if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
         {
             refreshScreen()
@@ -211,6 +215,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                 self.navigationController?.popViewController(animated: true)
             }
             
+        }
         }
         
         self.deleteBtn.layer.cornerRadius = 8
@@ -229,8 +234,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         if(Preferences.shared.getFirstTimePreference()==false)
         {
+             DatabaseManagement.shared.serialQueue.sync() {
             GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.totalNoOfImages, label: "\(DatabaseManagement.shared.getTotalImageCount())")
-            
+            }
             GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: newDataModel?.count))")
             
             Preferences.shared.setfistTimePreference()
@@ -308,12 +314,20 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
             
             DispatchQueue.global(qos:.background).async {
+                DatabaseManagement.shared.serialQueue.sync() {
                 self.newDataModel=self.getData()
+                }
                 self.dataModel=self.newDataModel
+                 var scannedImages=0
+                 DatabaseManagement.shared.serialQueue.sync() {
+                    scannedImages=DatabaseManagement.shared.getScannedImages()
+                }
+                 var totalImages=0
+                 DatabaseManagement.shared.serialQueue.sync() {
+                 totalImages=DatabaseManagement.shared.getTotalImageCount()
+                }
                 
-                let scannedImages=DatabaseManagement.shared.getScannedImages()
-                let totalImages=DatabaseManagement.shared.getTotalImageCount()
-                
+                 DatabaseManagement.shared.serialQueue.sync() {
                 DispatchQueue.main.async(execute:{
                     self.selectOrDeselectAll(select: true)
                     
@@ -355,6 +369,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                         self.refreshScreen()
                     }
                 })
+            }
             }
             //self.dataModel=self.getData()
             
@@ -550,8 +565,12 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func getData() -> [ImageModel]?
     {
+        
         dataModel=DatabaseManagement.shared.getJunkImages()
+        
+        
         return dataModel
+        
     }
     
     var documentsUrl: URL {
@@ -684,7 +703,10 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             let trashPath=result+"/"+imageName
             
-            let result = DatabaseManagement.shared.updateTrashTransaction(mPath: (deletionSet?[k])!, trashPath: trashPath)
+            DatabaseManagement.shared.serialQueue.sync {
+                _ = DatabaseManagement.shared.updateTrashTransaction(mPath: (deletionSet?[k])!, trashPath: trashPath)
+            }
+            
             print("Trash path updated in DB ",result)
             
             k=k+1
