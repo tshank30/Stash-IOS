@@ -281,16 +281,16 @@ class SplashViewController: UIViewController {
                                     //                                    }
                                     
                                     DatabaseManagement.shared.serialQueue.sync() {
-                                    if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
-                                    {
-                                        //self.myGroup.enter()
-                                        self.myOpQueue.addOperation{
-                                            
-                                            self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
-                                            
-                                            
+                                        if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                        {
+                                            //self.myGroup.enter()
+                                            self.myOpQueue.addOperation{
+                                                
+                                                self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                                
+                                                
+                                            }
                                         }
-                                    }
                                     }
                                     
                                     print("enumeration")
@@ -355,7 +355,7 @@ class SplashViewController: UIViewController {
                 {
                     if(albumName != "WhatsApp")
                     {
-                         DatabaseManagement.shared.serialQueue.sync() {
+                        DatabaseManagement.shared.serialQueue.sync() {
                             DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
                         }
                     }
@@ -406,8 +406,8 @@ class SplashViewController: UIViewController {
         var j=0
         
         allImages?.removeAll()
-         DatabaseManagement.shared.serialQueue.sync() {
-        allImages=DatabaseManagement.shared.getAllImages();
+        DatabaseManagement.shared.serialQueue.sync() {
+            allImages=DatabaseManagement.shared.getAllImages();
         }
         
         print("total images \(allImages?.count)")
@@ -461,27 +461,27 @@ class SplashViewController: UIViewController {
                                 
                                 //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
                                 //print("total images in DB ",self.images?.count ?? "nothing in DB")
-                                 DatabaseManagement.shared.serialQueue.sync() {
-                                let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                
-                                if(present)
-                                {
-                                    do
+                                DatabaseManagement.shared.serialQueue.sync() {
+                                    let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
+                                    
+                                    if(present)
                                     {
-                                        if let index = try self.allImages.index(of: asset.localIdentifier)
+                                        do
                                         {
-                                            try  self.allImages.remove(at: index)
+                                            if let index = try self.allImages.index(of: asset.localIdentifier)
+                                            {
+                                                try  self.allImages.remove(at: index)
+                                            }
+                                            else
+                                            {
+                                                print("image not present")
+                                            }
+                                            
                                         }
-                                        else
-                                        {
-                                            print("image not present")
+                                        catch{
+                                            print("error ",error.localizedDescription)
                                         }
-                                        
                                     }
-                                    catch{
-                                        print("error ",error.localizedDescription)
-                                    }
-                                }
                                 }
                                 //                                else
                                 //                                {
@@ -489,17 +489,17 @@ class SplashViewController: UIViewController {
                                 //                                    DatabaseManagement.shared.updateFileSize(fileSize: self.getSizeFromIdentifier(identifier: asset.localIdentifier),mPath: asset.localIdentifier)
                                 //                                }
                                 
-                                 DatabaseManagement.shared.serialQueue.sync() {
-                                if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
-                                {
-                                    //self.myGroup.enter()
-                                    self.myOpQueue.addOperation{
-                                        
-                                        self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
-                                        
-                                        
+                                DatabaseManagement.shared.serialQueue.sync() {
+                                    if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                    {
+                                        //self.myGroup.enter()
+                                        self.myOpQueue.addOperation{
+                                            
+                                            self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                            
+                                            
+                                        }
                                     }
-                                }
                                 }
                                 print("enumeration")
                                 
@@ -524,8 +524,8 @@ class SplashViewController: UIViewController {
             
         }
         
-         DatabaseManagement.shared.serialQueue.sync() {
-        DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
+        DatabaseManagement.shared.serialQueue.sync() {
+            DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
         }
         self.allImages?.removeAll()
         
@@ -737,17 +737,29 @@ class SplashViewController: UIViewController {
                     if(junkTag == 1)
                     {
                         print("Image is Junk")
-                         DatabaseManagement.shared.serialQueue.sync() {
-                        let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
-                        print("junk insertion :", result)
+                        DatabaseManagement.shared.serialQueue.sync() {
+                            do{
+                                let result = try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
+                                print("junk insertion :", result)
+                            }
+                            catch{
+                                print(error.localizedDescription)
+                            }
+                            
                         }
                     }
                     else{
                         print("Image is not Junk")
-                         DatabaseManagement.shared.serialQueue.sync() {
+                        DatabaseManagement.shared.serialQueue.sync() {
+                            do
+                            {
+                                let result =  try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
+                                print("non junk insertion :", result)
+                            }
+                            catch{
+                                print(error.localizedDescription)
+                            }
                             
-                        let result = DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
-                        print("non junk insertion :", result)
                         }
                     }
                     
