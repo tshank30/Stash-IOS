@@ -123,7 +123,8 @@ class SplashViewController: UIViewController {
                     } else {
                         
                         DispatchQueue.global(qos:.background).async {
-                            self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
+                            //self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
+                            self.scanGalleryImageAlso()
                             print("Install Whatsapp")
                         }
                         
@@ -194,9 +195,9 @@ class SplashViewController: UIViewController {
         }
         
         allImages?.removeAll()
-        DatabaseManagement.shared.serialQueue.sync() {
-            allImages=DatabaseManagement.shared.getAllImages();
-        }
+        // DatabaseManagement.shared.serialQueue.sync() {
+        allImages=DatabaseManagement.shared.getAllImages();
+        // }
         
         print("total images \(allImages?.count)")
         
@@ -247,75 +248,52 @@ class SplashViewController: UIViewController {
                                     
                                     
                                     
-                                    
-                                    // self.images?.append(img)
-                                    
-                                    //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
-                                    //print("total images in DB ",self.images?.count ?? "nothing in DB")
-                                    DatabaseManagement.shared.serialQueue.sync() {
-                                        let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                        if(present)
+                                    //DatabaseManagement.shared.serialQueue.sync() {
+                                    let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
+                                    if(present)
+                                    {
+                                        do
                                         {
-                                            do
+                                            if let index = try self.allImages.index(of: asset.localIdentifier)
                                             {
-                                                if let index = try self.allImages.index(of: asset.localIdentifier)
-                                                {
-                                                    try  self.allImages.remove(at: index)
-                                                }
-                                                else
-                                                {
-                                                    print("image not present")
-                                                }
-                                                
+                                                try  self.allImages.remove(at: index)
                                             }
-                                            catch{
-                                                print("error ",error.localizedDescription)
+                                            else
+                                            {
+                                                print("image not present")
                                             }
+                                            
+                                        }
+                                        catch{
+                                            print("error ",error.localizedDescription)
                                         }
                                     }
+                                   
                                     
-                                    //                                    else
-                                    //                                    {
-                                    //                                        print("image inserted ",j)
-                                    //                                        DatabaseManagement.shared.updateFileSize(fileSize: self.getSizeFromIdentifier(identifier: asset.localIdentifier),mPath: asset.localIdentifier)
-                                    //                                    }
-                                    
-                                    DatabaseManagement.shared.serialQueue.sync() {
-                                        if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
-                                        {
-                                            //self.myGroup.enter()
-                                            self.myOpQueue.addOperation{
-                                                
-                                                self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
-                                                
-                                                
-                                            }
+                                    if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                    {
+                                        //self.myGroup.enter()
+                                        self.myOpQueue.addOperation{
+                                            
+                                            self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                            
+                                            
                                         }
                                     }
+                                    // }
                                     
                                     print("enumeration")
                                     
-                                    
-                                    
-                                    
-                                    
-                                    //                                    asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
-                                    //                                        if let input = eidtingInput, let imgURL = input.fullSizeImageURL
-                                    //                                    }
                                 }
                                 
                             }
                             
                             print("enumeration asset")
                             
-                            //}
+                            
                         })
                         
-                        //                        myGroup.notify(queue: .main) {
-                        //                            print("Finished all requests.")
-                        //                        }
-                        
-                        //initalaizeUrls(assets: assets)
+                  
                         print("enumeration returning asset")
                         
                         
@@ -331,23 +309,10 @@ class SplashViewController: UIViewController {
                 
             }
             
-            
-            //            var i=0
-            //            let imageModels:[ImageModel]=DatabaseManagement.shared.getNotScannedAssets()
-            //
-            //            for imgMod in imageModels
-            //            {
-            //                print("imageSizeScanned \(imgMod.getFileSize())")
-            //                self.myOpQueue.addOperation{
-            //                    self.UploadRequest(image: self.getAssetThumbnail(asset: imgMod.getPHAsset()),mPath : imgMod.getIdentifier(),filename: "image \(i)")
-            //                }
-            //
-            //                i=i+1;
-            //            }
-            
+        
             
             DispatchQueue.main.async { // 2
-                //self.fadeInNewImage(overlayImage) // 3
+    
                 print("Total Photos",  self.asset?.count ?? "No Photos in whatsapp")
                 
                 print("Photos added", j)
@@ -355,19 +320,17 @@ class SplashViewController: UIViewController {
                 {
                     if(albumName != "WhatsApp")
                     {
-                        DatabaseManagement.shared.serialQueue.sync() {
-                            DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
-                        }
+                        
+                        
+                        DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
+                        self.allImages?.removeAll()
+                        openView=false
+                        
+                        self.navigationController?.popViewController(animated: true)
+                        self.dismiss(animated: true, completion: nil)
+                        
+                        self.performSegue(withIdentifier: "HomeScreen", sender: nil)
                     }
-                    
-                    self.allImages?.removeAll()
-                    openView=false
-                    
-                    self.navigationController?.popViewController(animated: true)
-                    self.dismiss(animated: true, completion: nil)
-                    
-                    self.performSegue(withIdentifier: "HomeScreen", sender: nil)
-                    
                 }
                 
             }
@@ -381,17 +344,21 @@ class SplashViewController: UIViewController {
         }
         else{
             
-            DispatchQueue.main.async {
-                
-                self.navigationController?.popViewController(animated: true)
-                self.dismiss(animated: true, completion: nil)
-                
-                self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+            if(albumName != "WhatsApp")
+            {
+                DispatchQueue.main.async {
+                    
+                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
+                    
+                    self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+                }
             }
         }
         print("returning empty asset")
         return [PHAsset]()
     }
+    
     
     
     func scanGalleryImageAlso()
@@ -401,14 +368,14 @@ class SplashViewController: UIViewController {
         options.sortDescriptors = [ NSSortDescriptor(key: "pixelWidth", ascending: true)  ]
         let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         //let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        
+        var seguePerformed = false
         
         var j=0
         
         allImages?.removeAll()
-        DatabaseManagement.shared.serialQueue.sync() {
-            allImages=DatabaseManagement.shared.getAllImages();
-        }
+        // DatabaseManagement.shared.serialQueue.sync() {
+        allImages=DatabaseManagement.shared.getAllImages();
+        //  }
         
         print("total images \(allImages?.count)")
         
@@ -457,50 +424,57 @@ class SplashViewController: UIViewController {
                                 
                                 
                                 
+                                
+                                
                                 // self.images?.append(img)
                                 
                                 //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
                                 //print("total images in DB ",self.images?.count ?? "nothing in DB")
-                                DatabaseManagement.shared.serialQueue.sync() {
-                                    let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                    
-                                    if(present)
-                                    {
-                                        do
-                                        {
-                                            if let index = try self.allImages.index(of: asset.localIdentifier)
-                                            {
-                                                try  self.allImages.remove(at: index)
-                                            }
-                                            else
-                                            {
-                                                print("image not present")
-                                            }
-                                            
-                                        }
-                                        catch{
-                                            print("error ",error.localizedDescription)
-                                        }
-                                    }
-                                }
-                                //                                else
-                                //                                {
-                                //                                    print("image inserted ",j)
-                                //                                    DatabaseManagement.shared.updateFileSize(fileSize: self.getSizeFromIdentifier(identifier: asset.localIdentifier),mPath: asset.localIdentifier)
-                                //                                }
+                                //   DatabaseManagement.shared.serialQueue.sync() {
+                                let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
                                 
-                                DatabaseManagement.shared.serialQueue.sync() {
-                                    if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                if(present)
+                                {
+                                    do
                                     {
-                                        //self.myGroup.enter()
-                                        self.myOpQueue.addOperation{
-                                            
-                                            self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
-                                            
-                                            
+                                        if let index = try self.allImages.index(of: asset.localIdentifier)
+                                        {
+                                            try  self.allImages.remove(at: index)
                                         }
+                                        else
+                                        {
+                                            print("image not present")
+                                        }
+                                        
+                                    }
+                                    catch{
+                                        print("error ",error.localizedDescription)
                                     }
                                 }
+                                
+                                if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                {
+                                    
+                                    self.myOpQueue.addOperation{
+                                        
+                                        self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                        
+                                        
+                                    }
+                                }
+                                
+                                if(j>=50 && !seguePerformed)
+                                {
+                                    seguePerformed=true
+                                    DispatchQueue.main.async {
+                                        
+                                        self.navigationController?.popViewController(animated: true)
+                                        self.dismiss(animated: true, completion: nil)
+                                        
+                                        self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+                                    }
+                                }
+                                
                                 print("enumeration")
                                 
                             }
@@ -524,10 +498,22 @@ class SplashViewController: UIViewController {
             
         }
         
-        DatabaseManagement.shared.serialQueue.sync() {
-            DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
-        }
+        //  DatabaseManagement.shared.serialQueue.sync() {
+        DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
+        //  }
         self.allImages?.removeAll()
+        
+        if(!seguePerformed)
+        {
+            DispatchQueue.main.async { // 2
+                
+                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
+                
+                self.performSegue(withIdentifier: "HomeScreen", sender: nil)
+                
+            }
+        }
         
         
     }
@@ -737,30 +723,32 @@ class SplashViewController: UIViewController {
                     if(junkTag == 1)
                     {
                         print("Image is Junk")
-                        DatabaseManagement.shared.serialQueue.sync() {
-                            do{
-                                let result = try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
-                                print("junk insertion :", result)
-                            }
-                            catch{
-                                print(error.localizedDescription)
-                            }
-                            
+                        //  DatabaseManagement.shared.serialQueue.sync() {
+                        do{
+                            print("UpdateIdentifier",mPath)
+                            let result = try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "1")
+                            print("junk insertion :", result)
                         }
+                        catch{
+                            print(error.localizedDescription)
+                        }
+                        
+                        //  }
                     }
                     else{
                         print("Image is not Junk")
-                        DatabaseManagement.shared.serialQueue.sync() {
-                            do
-                            {
-                                let result =  try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
-                                print("non junk insertion :", result)
-                            }
-                            catch{
-                                print(error.localizedDescription)
-                            }
-                            
+                        //   DatabaseManagement.shared.serialQueue.sync() {
+                        do
+                        {
+                            print("UpdateIdentifier",mPath)
+                            let result =  try DatabaseManagement.shared.updateImageInDB(mPath : mPath, responseStatus : "1",actionStatus : "-1")
+                            print("non junk insertion :", result)
                         }
+                        catch{
+                            print(error.localizedDescription)
+                        }
+                        
+                        ///  }
                     }
                     
                     

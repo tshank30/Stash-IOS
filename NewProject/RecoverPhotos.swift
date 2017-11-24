@@ -92,12 +92,12 @@ class RecoverPhotos: NSObject {
                 
               
                 
-                DatabaseManagement.shared.serialQueue.sync() {
+//                DatabaseManagement.shared.serialQueue.sync() {
                     if(success && DatabaseManagement.shared.updateRecoveryTransaction(mPath: identifier , identifier : localIdentifier)==true)
                     {
                         
                     }
-                }
+               // }
                 
                 
                 //let x=assetPlaceHolder?.localIdentifier

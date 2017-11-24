@@ -15,7 +15,7 @@ class DatabaseManagement
     static let shared:DatabaseManagement=DatabaseManagement()
     private var managedObjectContext: NSManagedObjectContext;
     
-    public var serialQueue :DispatchQueue
+   // public var serialQueue :DispatchQueue
     
     
     //    responsestatus ->
@@ -33,13 +33,13 @@ class DatabaseManagement
     {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.managedObjectContext = appDelegate.managedObjectContext
-        serialQueue = DispatchQueue(label: "stash.coredata.queue")
+        //serialQueue = DispatchQueue(label: "stash.coredata.queue")
     }
     
-//    func getQueue()->DispatchQueue
-//    {
-//        return serialQueue
-//    }
+    //    func getQueue()->DispatchQueue
+    //    {
+    //        return serialQueue
+    //    }
     
     
     func getNotScannedAssets() -> [ImageModel]
@@ -66,7 +66,7 @@ class DatabaseManagement
                         mTrashPath: String(describing: person.value(forKey: "trashpath")),
                         identifier : String(describing: person.value(forKey: "path")!))
                     
-                   // print("filesize \(person.value(forKey: "filesize")!)")
+                    // print("filesize \(person.value(forKey: "filesize")!)")
                     
                     print("fetchasset \(img.getIdentifier())")
                     img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()], options: nil)[0])
@@ -90,25 +90,17 @@ class DatabaseManagement
     
     func getTotalImageCount() -> Int {
         
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-//
-//        // Create Entity Description
-//        let entityDescription = NSEntityDescription.entity(forEntityName: "Images", in: self.managedObjectContext)
-//
-//        // Configure Fetch Request
-//        fetchRequest.entity = entityDescription
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "responsestatus = '3' OR responsestatus = '0' OR responsestatus = '1'")
         
-        
         do {
-            let result = try self.managedObjectContext.fetch(fetchRequest)
+            let result = try privateMOC.fetch(fetchRequest)
             print(result)
             
             return result.count
-            
-            
         } catch {
             let fetchError = error as NSError
             print(fetchError)
@@ -119,11 +111,14 @@ class DatabaseManagement
     
     func isPresent(mPath: String) -> Bool
     {
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "path = '\(mPath)'")
         
         do {
-            let result = try self.managedObjectContext.fetch(fetchRequest)
+            let result = try privateMOC.fetch(fetchRequest)
             print(result)
             
             if (result.count > 0) {
@@ -180,18 +175,18 @@ class DatabaseManagement
     
     func insertImageWithIdentifier(img : ImageModel) -> Bool{
         
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+        
         if(!isPresent(mPath: img.getIdentifier()))
         {
-            let managedContext = managedObjectContext
-            //NSPersistentStoreCoordinator.viewContext as! NSManagedObjectContext
             
-            // 2
             let entity =
                 NSEntityDescription.entity(forEntityName: "Images",
-                                           in: managedContext)!
+                                           in: privateMOC)!
             
             let person = NSManagedObject(entity: entity,
-                                         insertInto: managedContext)
+                                         insertInto: privateMOC)
             
             print("identifier",img.getIdentifier())
             print("path ",String(describing: img.getPath()))
@@ -209,25 +204,51 @@ class DatabaseManagement
             person.setValue(String(getSizeFromIdentifier(identifier: img.getIdentifier())), forKeyPath: "filesize")
             
             
-           // person.isInserted
+            // person.isInserted
             // 4
-//            if !person.isInserted {
-//                managedContext.insert(person)
-//                print("inserted")
-//            }
-//            else{
-//                 print("not inserted")
-//            }
+            //            if !person.isInserted {
+            //                managedContext.insert(person)
+            //                print("inserted")
+            //            }
+            //            else{
+            //                 print("not inserted")
+            //            }
             
-            do {
-                try managedContext.save()
-                //people.append(person)
-                return true
+            var returnArg: Bool = false
+            
+            privateMOC.perform {
                 
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-                return false
+                do {
+                    try privateMOC.save()
+                     returnArg=true
+//                     returnArg=trueWait {
+//                        do {
+//                            try self.managedObjectContext.save()
+//                            returnArg=true
+//                        } catch {
+//                            fatalError("Failure to save context: \(error)")
+//                            returnArg=false
+//                        }
+//                    }
+                    
+                } catch {
+                    fatalError("Failure to save context: \(error)")
+                    returnArg = false
+                }
+                
+                
             }
+            
+            return returnArg
+            //            do {
+            //                try managedContext.save()
+            //                //people.append(person)
+            //                return true
+            //
+            //            } catch let error as NSError {
+            //                print("Could not save. \(error), \(error.userInfo)")
+            //                return false
+            //            }
             
         }
         else{
@@ -239,28 +260,49 @@ class DatabaseManagement
     
     func updateImageInDB(mPath: String,responseStatus : String, actionStatus : String) -> Bool
     {
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+        
         
         let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest.init(entityName: "Images")
         let predicate = NSPredicate(format: "path = '\(mPath)'")
         fetchRequest.predicate = predicate
         do
         {
-            let test = try self.managedObjectContext.fetch(fetchRequest)
+            let test = try privateMOC.fetch(fetchRequest)
             if test.count == 1
             {
                 let objectUpdate = test[0] as! NSManagedObject
                 objectUpdate.setValue(responseStatus, forKey: "responsestatus")
                 objectUpdate.setValue(actionStatus, forKey: "actionstatus")
                 
-                do{
-                    try self.managedObjectContext.save()
-                    return true
+                
+                privateMOC.perform {
+                    
+                    do {
+                        try privateMOC.save()
+//                        self.managedObjectContext.performAndWait {
+//                            do {
+//                                try self.managedObjectContext.save()
+//                            } catch {
+//                                fatalError("Failure to save context: \(error)")
+//                            }
+//                        }
+                        
+                    } catch {
+                        fatalError("Failure to save context: \(error)")
+                    }
                 }
-                catch
-                {
-                    print(error)
-                    return false
-                }
+                
+                //                do{
+                //                    try self.managedObjectContext.save()
+                //                    return true
+                //                }
+                //                catch
+                //                {
+                //                    print(error)
+                //                    return false
+                //                }
             }
         }
         catch
@@ -274,11 +316,15 @@ class DatabaseManagement
     
     func isScannedWithIdentifier(identifier: String) -> Bool
     {
+        
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "path = '\(identifier)'")
         
         do {
-            let result = try self.managedObjectContext.fetch(fetchRequest)
+            let result = try privateMOC.fetch(fetchRequest)
             print(result)
             
             if (result.count > 0) {
@@ -372,11 +418,14 @@ class DatabaseManagement
     
     func getJunkImagesCount() -> Int {
         
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "responsestatus = '1' AND actionstatus = '1'")
         
         do {
-            let result = try self.managedObjectContext.fetch(fetchRequest)
+            let result = try privateMOC.fetch(fetchRequest)
             print(result)
             
             return result.count
@@ -420,10 +469,10 @@ class DatabaseManagement
                         mResponseStatus: Int(String(describing: person.value(forKey: "responsestatus")!))!,
                         mTrashPath:((SplashViewController.logsPath?.appendingPathComponent(identifier))?.path)!, identifier : String(describing: person.value(forKey: "path")!))
                     
-                   
-                   // img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()] , options: nil)[0])
                     
-                        images.append(img)
+                    // img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: [img.getIdentifier()] , options: nil)[0])
+                    
+                    images.append(img)
                     
                     print(person.value(forKey: "path"))
                     
@@ -443,6 +492,10 @@ class DatabaseManagement
     func getAllImages() -> [String]
     {
         var images = [String]()
+        
+        var imageDictionary = Dictionary<String, String>()
+        
+        
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "responsestatus = '0' OR responsestatus = '1' OR responsestatus = '3'")
@@ -467,7 +520,10 @@ class DatabaseManagement
                     //
                     //                    img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: person.value(forKey: "path"), options: nil)[0])
                     //
-                    images.append(String(describing: person.value(forKey: "path")!))
+                    
+                    let identifier = String(describing: person.value(forKey: "path")!)
+                    images.append(identifier)
+                    imageDictionary[identifier] = identifier
                     
                     print("identifiers \(person.value(forKey: "path")!)")
                 }
@@ -483,13 +539,66 @@ class DatabaseManagement
         
     }
     
+    func getAllImagesDictionary() -> [String : String]
+    {
+        //var images = [String]()
+        
+        var imageDictionary = Dictionary<String, String>()
+
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
+        fetchRequest.predicate = NSPredicate(format: "responsestatus = '0' OR responsestatus = '1' OR responsestatus = '3'")
+        
+        do {
+            let result = try self.managedObjectContext.fetch(fetchRequest)
+            print(result)
+            
+            if (result.count > 0) {
+                
+                for user in result
+                {
+                    let person = user as! NSManagedObject
+                    
+                    print("Table  - \(person)")
+                    
+                    //                    let img = ImageModel(
+                    //                        mPath: URL(string: String(person.value(forKey: "imagepath")))!,
+                    //                        mResponseStatus: Int(String(person.value(forKey: "responsestatus")))!,
+                    //                        mTrashPath: String(person.value(forKey: "trashpath")) ,
+                    //                        identifier : String(person.value(forKey: "path")))
+                    //
+                    //                    img.setPHAsset(asset: PHAsset.fetchAssets(withLocalIdentifiers: person.value(forKey: "path"), options: nil)[0])
+                    //
+                    
+                    let identifier = String(describing: person.value(forKey: "path")!)
+                    //images.append(identifier)
+                    imageDictionary[identifier] = identifier
+                    
+                    print("identifiers \(person.value(forKey: "path")!)")
+                }
+                // print("2 - \(person)")
+            }
+            
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+        }
+        
+        return imageDictionary
+        
+    }
+    
     
     func getScannedImages() -> Int {
+        
+        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        privateMOC.parent = self.managedObjectContext
+       
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Images")
         fetchRequest.predicate = NSPredicate(format: "responsestatus = '1' OR responsestatus = '3'")
         
         do {
-            let result = try self.managedObjectContext.fetch(fetchRequest)
+            let result = try privateMOC.fetch(fetchRequest)
             print(result)
             
             return result.count

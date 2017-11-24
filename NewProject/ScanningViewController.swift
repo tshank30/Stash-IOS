@@ -23,7 +23,7 @@ class ScanningViewController: UIViewController {
 
         super.viewDidLoad()
         
-        DatabaseManagement.shared.serialQueue.sync {
+       // DatabaseManagement.shared.serialQueue.sync {
             let totalImages = DatabaseManagement.shared.getTotalImageCount()
             if(totalImages != 0)
             {
@@ -34,7 +34,7 @@ class ScanningViewController: UIViewController {
                 scanningText.text = "Scanning 0 images"
                 self.progress.setProgress(0,animated: false)
             }
-        }
+       // }
         
         
         navigationItem.hidesBackButton = true
