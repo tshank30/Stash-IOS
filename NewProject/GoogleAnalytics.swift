@@ -45,6 +45,8 @@ class GoogleAnalytics
             return }
         tracker.set(kGAIScreenName, value: screenName)
         tracker.send(builder.build() as [NSObject : AnyObject])
+        
+        print("ProjectGoogleAnalyticsScreenTracking : ",screenName)
     }
     
     
@@ -55,6 +57,19 @@ class GoogleAnalytics
             return }
    
         tracker.send(builder.build() as [NSObject : AnyObject])
+        
+        print("ProjectGoogleAnalyticsEventTracking -> Category : \(category) Action : \(action)  Label : \(label) ")
+    }
+    
+    func sendEvent(category : String, action : String, label : String, value : NSNumber)
+    {
+        guard let builder = GAIDictionaryBuilder.createEvent(withCategory: category, action: action, label: label, value: value) else {
+            print("Unable to create Event Builder")
+            return }
+        
+        tracker.send(builder.build() as [NSObject : AnyObject])
+        
+         print("ProjectGoogleAnalyticsEventTracking -> Category : \(category)  Action : \(action)  Label : \(label)  value : \(value) ")
     }
     
     

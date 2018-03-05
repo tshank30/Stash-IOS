@@ -112,7 +112,17 @@ class DeletionViewController: UIViewController {
     
     
     override func viewDidAppear(_ animated: Bool) {
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deletionScreenName)
+        //GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deletionScreenName)
+        
+         if(Preferences.shared.getFirstTimeSplashCounter()==2 && !Preferences.shared.getFirstTimeDeletionScreenGaPreference())
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deletionScreenNameFirstTime)
+            Preferences.shared.setFirstTimeDeletionScreenGaPreference()
+        }
+        else{
+             GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deletionScreenName)
+        }
+        
     }
 
     /*

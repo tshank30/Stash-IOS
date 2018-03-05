@@ -26,7 +26,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     @IBOutlet weak var scanningView : UIView!
     // @IBOutlet weak var scanningView: UIView!
     //@IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
-       @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var scanningViewHeightConstraint: NSLayoutConstraint!
     
     var scanningOn : Bool = false
     var photoZoomIdentifier : String!
@@ -76,18 +76,23 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     @IBAction func deleteImages(_ sender: Any) {
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesSelected, label: "\(String(describing: deletionSet?.count))")
+        //        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.NoOfImagesSelected, label: "\(String(describing: deletionSet?.count))")
         
         
         if((deletionSet?.count)!>0)
         {
             
-            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deleteConfirmationScreenName)
-            
-            
+            if(Preferences.shared.getFirstTimeDeletionConfScreenGaPreference())
+            {
+                GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deleteConfirmationScreenName)
+                
+            }
+            else{
+                GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.deleteConfirmationScreenNameFirstTime)
+                Preferences.shared.setFirstTimeDeletionConfScreenGaPreference()
+            }
             
             printTime()
-            //copyImagesToTrash(asset: deletionAsset!)
             
             DispatchQueue.global(qos: .userInitiated).async {
                 self.copyImagesToTrash(asset: self.deletionAsset!, completionHandler: { (success) -> Void in
@@ -95,7 +100,6 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                     // When download completes,control flow goes here.
                     if success {
                         
-                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.NoOfImagesDeleted, label: "\(String(describing: self.deletionSet?.count))")
                         // download success
                         PHPhotoLibrary.shared().performChanges({
                             let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: self.deletionSet!, options: nil)
@@ -108,16 +112,24 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                                 
                                 // DatabaseManagement.shared.serialQueue.sync() {
                                 DatabaseManagement.shared.finishTrashTransaction(mPath: self.deletionSet!)
-                               // }
+                                // }
                                 DispatchQueue.main.async {
-                                    // Update UI
-                                    //self.navigationController?.popViewController(animated: true)
                                     
-                                    //self.dismiss(animated: true, completion: nil)
-                                    
-                                    //                    self.navigationController?.popViewController(animated: false)
-                                    //
-                                    //                    self.delegate?.DeletionScreen(string: "Sent from ReviewController")
+                                    if(Preferences.shared.getFirstTimeSplashCounter()==1)
+                                    {
+                                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.firstTimeAction,  label: Constants.NoOfImagesDeleted, value: NSNumber(value : (self.deletionSet?.count)!))
+                                        
+                                        
+                                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.firstTimeAction,  label: Constants.NoOfImagesSuggested, value : NSNumber(value : (self.dataModel?.count)!))
+                                        
+                                        Preferences.shared.setFirstTimeSplashCounter()
+                                    }
+                                    else{
+                                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.afterFirstTimeAction,  label: Constants.NoOfImagesDeleted, value: NSNumber(value : (self.deletionSet?.count)!))
+                                        
+                                        
+                                        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.afterFirstTimeAction,  label: Constants.NoOfImagesSuggested, value : NSNumber(value : (self.dataModel?.count)!))
+                                    }
                                     
                                     
                                     var viewControllersArray = self.navigationController?.viewControllers
@@ -171,8 +183,44 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     
     override func viewDidAppear(_ animated: Bool) {
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenName)
+        
+        
+        if( Preferences.shared.getFirstTimeSplashCounter()==1 && !Preferences.shared.getFirstTimeReviewScreenGaPreference())
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenNameFirstTime)
+            Preferences.shared.setFirstTimeReviewScreenGaPreference()
+        }
+        else
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.reviewScreenName)
+        }
+        
+        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: "landing", label: "")
+        
+        DispatchQueue.global(qos:.background).async {
+            
+            let scannedImages = DatabaseManagement.shared.getScannedImages()
+            let totalImages = DatabaseManagement.shared.getTotalImageCount()
+            
+            if(Preferences.shared.getFirstTimeSplashCounter()==1 && !Preferences.shared.getFirstTimeReviewScreenAnalyticsSent())
+            {
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.firstTimeAction, label: "total_photos", value: NSNumber(value: totalImages))
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.firstTimeAction, label: "scanned_photos", value: NSNumber(value: scannedImages))
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.firstTimeAction, label: "preselected_photos", value: NSNumber(value: (self.deletionSet?.count)!))
+                Preferences.shared.setFirstTimeReviewScreenAnalyticsSent()
+            }
+            else
+            {
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.afterFirstTimeAction, label: "total_photos", value: NSNumber(value: totalImages))
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.afterFirstTimeAction, label: "scanned_photos", value: NSNumber(value: scannedImages))
+                GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.afterFirstTimeAction, label: "preselected_photos", value: NSNumber(value: (self.deletionSet?.count)!))
+            }
+        }
     }
+    
+    
+    
+    
     
     @IBOutlet weak var collectionView: UICollectionView!
     override func viewDidLoad() {
@@ -180,11 +228,11 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.reviewScreen, custDimVal: String(describing : Preferences.shared.setReviewScreenPreference))
         
-       
+        
         
         yourCellInterItemSpacing=3
         
-       
+        
         
         let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout // casting is
         layout?.minimumLineSpacing = 4
@@ -196,9 +244,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         deletionSet=[String]()
         dataModel=[ImageModel]()
-      //  DatabaseManagement.shared.serialQueue.sync() {
+        //  DatabaseManagement.shared.serialQueue.sync() {
         newDataModel=getData()
-       // }
+        // }
         
         // DatabaseManagement.shared.serialQueue.sync() {
         if(DatabaseManagement.shared.getScannedImages() != DatabaseManagement.shared.getTotalImageCount())
@@ -216,7 +264,7 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             }
             
         }
-      //  }
+        //  }
         
         self.deleteBtn.layer.cornerRadius = 8
         
@@ -227,20 +275,20 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         // Do any additional setup after loading the view.
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
-        
-        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesSuggestedOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
-        
-        
-        if(Preferences.shared.getFirstTimePreference()==false)
-        {
-            // DatabaseManagement.shared.serialQueue.sync() {
-            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.totalNoOfImages, label: "\(DatabaseManagement.shared.getTotalImageCount())")
-           // }
-            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: newDataModel?.count))")
-            
-            Preferences.shared.setfistTimePreference()
-        }
+        //        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
+        //
+        //        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesSuggestedOnReviewScreen, label: "\(String(describing: newDataModel?.count))")
+        //
+        //
+        //        if(Preferences.shared.getFirstTimePreference()==false)
+        //        {
+        //            // DatabaseManagement.shared.serialQueue.sync() {
+        //            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.totalNoOfImages, label: "\(DatabaseManagement.shared.getTotalImageCount())")
+        //           // }
+        //            GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenName, action: Constants.imagesVisibleOnReviewScreenfirst, label: "\(String(describing: newDataModel?.count))")
+        //
+        //            Preferences.shared.setfistTimePreference()
+        //        }
         
         //updateHeader()
         
@@ -314,26 +362,26 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
             
             DispatchQueue.global(qos:.background).async {
-               // DatabaseManagement.shared.serialQueue.sync() {
+                // DatabaseManagement.shared.serialQueue.sync() {
                 self.newDataModel=self.getData()
-               // }
+                // }
                 self.dataModel=self.newDataModel
-                 var scannedImages=0
-              //   DatabaseManagement.shared.serialQueue.sync() {
-                    scannedImages=DatabaseManagement.shared.getScannedImages()
-              //  }
-                 var totalImages=0
-              //   DatabaseManagement.shared.serialQueue.sync() {
-                 totalImages=DatabaseManagement.shared.getTotalImageCount()
-              //  }
+                var scannedImages=0
+                //   DatabaseManagement.shared.serialQueue.sync() {
+                scannedImages=DatabaseManagement.shared.getScannedImages()
+                //  }
+                var totalImages=0
+                //   DatabaseManagement.shared.serialQueue.sync() {
+                totalImages=DatabaseManagement.shared.getTotalImageCount()
+                //  }
                 
-              //   DatabaseManagement.shared.serialQueue.sync() {
+                //   DatabaseManagement.shared.serialQueue.sync() {
                 DispatchQueue.main.async(execute:{
                     self.selectOrDeselectAll(select: true)
                     
                     //self.updateHeader()
                     self.updateTitle()
-                   
+                    
                     if(self.deletionSet?.count == self.dataModel?.count)
                     {
                         self.allSelected=true
@@ -363,21 +411,21 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
                         self.scanningOn=true
                     }
                     
-                     self.collectionView.reloadData()
+                    self.collectionView.reloadData()
                     if(self.refresh==true)
                     {
                         self.refreshScreen()
                     }
                 })
-            //}
+                //}
             }
             //self.dataModel=self.getData()
             
             
             
-           
             
-        
+            
+            
             
         })
     }
@@ -455,13 +503,13 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             headerView.headerText.text = "\(dataModel?.count ?? 0) Junk Images"
             
-//            if(scanningOn)
-//            {
-//                headerView.scanningViewHeight.constant=30
-//            }
-//            else{
-//                headerView.scanningViewHeight.constant=0
-//            }
+            //            if(scanningOn)
+            //            {
+            //                headerView.scanningViewHeight.constant=30
+            //            }
+            //            else{
+            //                headerView.scanningViewHeight.constant=0
+            //            }
             //headerView.backgroundColor = UIColor.blue;
             return headerView
             
@@ -703,9 +751,9 @@ class ReviewViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             let trashPath=result+"/"+imageName
             
-           // DatabaseManagement.shared.serialQueue.sync {
-                _ = DatabaseManagement.shared.updateTrashTransaction(mPath: (deletionSet?[k])!, trashPath: trashPath)
-           // }
+            // DatabaseManagement.shared.serialQueue.sync {
+            _ = DatabaseManagement.shared.updateTrashTransaction(mPath: (deletionSet?[k])!, trashPath: trashPath)
+            // }
             
             print("Trash path updated in DB ",result)
             

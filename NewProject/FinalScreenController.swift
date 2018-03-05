@@ -9,7 +9,7 @@
 import UIKit
 
 class FinalScreenController: UIViewController {
-
+    
     var deletionCount : Int?
     
     @IBOutlet weak var reviewTrash: UIView!
@@ -29,12 +29,12 @@ class FinalScreenController: UIViewController {
     }
     
     
-   
+    
     @IBOutlet weak var ratingView: UIView!
     
     @IBOutlet weak var headerText: UILabel!
     
-   
+    
     
     @IBAction func feedbackOnNegativeRating(_ sender: Any) {
         feedBackPopUp()
@@ -42,7 +42,7 @@ class FinalScreenController: UIViewController {
     
     func feedBackPopUp()
     {
-         GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.feedback, label: "")
+        GoogleAnalytics.shared.sendEvent(category: Constants.reviewScreenCat, action: Constants.feedbackPopUp, label: "")
         //1. Create the alert controller.
         let alert = UIAlertController(title: "Feedback", message: "", preferredStyle: .alert)
         
@@ -57,7 +57,7 @@ class FinalScreenController: UIViewController {
             print("Text field: \(textField?.text)")
             if(textField?.text?.trimmingCharacters(in: [" "])=="")
             {
-               GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.feedback, label: "no review given")
+                GoogleAnalytics.shared.sendEvent(category: Constants.feedback, action: Constants.negative, label: "no review given")
             }
             else{
                 GoogleAnalytics.shared.sendEvent(category: Constants.feedback, action: Constants.negative, label: (textField?.text)!)
@@ -70,7 +70,7 @@ class FinalScreenController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-
+    
     
     @IBAction func rateApp(_ sender: Any) {
         rateApp(appId: "id959379869") { success in
@@ -84,8 +84,8 @@ class FinalScreenController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
-         GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.resultScreen, custDimVal: String(describing : Preferences.shared.setResultScreenPreference()))
+        
+        GoogleAnalytics.shared.signInGoogleAnalytics(custDimKey: Constants.resultScreen, custDimVal: String(describing : Preferences.shared.setResultScreenPreference()))
         
         if(deletionCount == 1)
         {
@@ -94,7 +94,7 @@ class FinalScreenController: UIViewController {
         {
             headerText.text = "\(deletionCount!) Junk Photos Cleaned"
         }
-     
+        
         reviewTrash.layer.cornerRadius = 8
         shareAppView.layer.cornerRadius = 8
         ratingView.layer.cornerRadius = 8
@@ -105,23 +105,23 @@ class FinalScreenController: UIViewController {
         negativeRating.layer.borderWidth = 1
         negativeRating.layer.borderColor = UIColor.init(red:255/255.0, green:255/255.0, blue:255/255.0, alpha: 1.0).cgColor
         
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.barTintColor = UIColor.init(red:2/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
-         self.navigationController?.navigationBar.tintColor = UIColor.init(red:255/255.0, green:255/255.0, blue:255/255.0, alpha: 1.0)
-       
+        self.navigationController?.navigationBar.tintColor = UIColor.init(red:255/255.0, green:255/255.0, blue:255/255.0, alpha: 1.0)
+        
     }
     
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.barTintColor = UIColor.white
-         self.navigationController?.navigationBar.tintColor = UIColor.init(red:2/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
+        self.navigationController?.navigationBar.tintColor = UIColor.init(red:2/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -129,10 +129,28 @@ class FinalScreenController: UIViewController {
     
     
     override func viewDidAppear(_ animated: Bool) {
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.finalScreenName)
+
+        GoogleAnalytics.shared.sendEvent(category: Constants.resultScreenCat, action: "landing", label: "")
+        
+        if(Preferences.shared.getFirstTimeSplashCounter()==2 && !Preferences.shared.getFirstTimeResultScreenGaPreference())
+        {
+            GoogleAnalytics.shared.sendEvent(category: Constants.resultScreenCat, action: Constants.deletedFirstTimeAction, label: "", value: NSNumber(value: deletionCount!))
+            
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.finalScreenNameFirstTime)
+            Preferences.shared.setFirstTimeResultScreenGaPreference()
+            
+        }
+        else{
+            GoogleAnalytics.shared.sendEvent(category: Constants.resultScreenCat, action: Constants.deletedAction, label: "", value: NSNumber(value: deletionCount!))
+            
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.finalScreenName)
+            
+        }
+        
+        
+        
+        
     }
-    
-  
     
     @IBAction func shareAppFunction(_ sender: Any) {
         shareAppFunc()
@@ -141,7 +159,7 @@ class FinalScreenController: UIViewController {
     func shareAppFunc()
     {
         
-         GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.share, label: "")
+        GoogleAnalytics.shared.sendEvent(category: Constants.resultScreenCat, action: Constants.share, label: "")
         
         let textToShare = "Hey, hi! you know I just tried out an app that lets you Clean Junk Whatsapp Images. So no need of manually searching Good Morning/Good Night photos anymore Try it! I think you'll find it useful"
         
@@ -157,23 +175,23 @@ class FinalScreenController: UIViewController {
             self.present(activityVC, animated: true, completion: nil)
         }
     }
-  
-  
+    
+    
     @IBAction func FinalToTrashScreen(_ sender: Any) {
-        GoogleAnalytics.shared.sendEvent(category: Constants.finalScreenName, action: Constants.trashBtn, label: "")
+        GoogleAnalytics.shared.sendEvent(category: Constants.resultScreenCat, action: Constants.trashBtn, label: "")
         performSegue(withIdentifier: "FinalToTrash", sender: nil)
-
+        
     }
     
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
     
     func rateApp(appId: String, completion: @escaping ((_ success: Bool)->())) {
         guard let url = URL(string : "http://itunes.apple.com/app/id1290150652") else {
@@ -186,5 +204,5 @@ class FinalScreenController: UIViewController {
         }
         UIApplication.shared.open(url, options: [:], completionHandler: completion)
     }
-
+    
 }

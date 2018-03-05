@@ -13,17 +13,36 @@ class Constants{
     
     //ScreenNames
     
+    static let homeScreenNameFirstTime = "HomeScreen_1st"
     static let homeScreenName = "HomeScreen"
+    static let reviewScreenNameFirstTime = "ReviewScreen_1st"
     static let reviewScreenName = "ReviewScreen"
-    static let deleteConfirmationScreenName = "DeleteConfirmScreen"
+    static let scanningScreenNameFirstTime = "ScanningScreen_1st"
+    static let scanningScreenName = "ScanningScreen"
+    static let deletionScreenNameFirstTime = "DeletionScreen_1st"
     static let deletionScreenName = "DeletionScreen"
-    static let finalScreenName = "FinalScreen"
+    static let finalScreenNameFirstTime = "ResultScreen_1st"
+    static let finalScreenName = "ResultScreen"
+    static let trashScreenNameFirstTime = "TrashScreen_1st"
     static let trashScreenName = "TrashScreen"
+    static let deleteConfirmationScreenNameFirstTime = "DeleteConfirmScreen_1st"
+    static let deleteConfirmationScreenName = "DeleteConfirmScreen"
+    static let photosPermissionScreenOnce = "PhotosPermissionCustomScreen_1st"
     static let photosPermissionScreen = "PhotosPermissionCustomScreen"
     static let photosPermmisionSettingScreen = "PhotosPermissionSettingScreen"
 
     
-    //Events
+    //Event categories
+    static let homeScreen = "Home"
+    static let reviewScreenCat = "Review"
+    static let resultScreenCat = "Result"
+    static let trashScreenCat = "Trash"
+    
+    //Event Action
+    static let firstTimeAction = "1st_time"
+    static let afterFirstTimeAction = "General"
+    static let deletedFirstTimeAction = "deleted_1st_time"
+    static let deletedAction = "deleted"
     
     //categories
     
@@ -31,21 +50,22 @@ class Constants{
 
     
     //action
-    static let photosPermission = "Photos Permission"
-    static let scanBtn = "Scan"
-    static let trashBtn = "Trash"
-    static let imagesVisibleOnReviewScreenfirst = "Images Visible on Review Screen (first time)"
-    static let imagesVisibleOnReviewScreen = "Images Visible on Review Screen"
-    static let imagesSuggestedOnReviewScreen = "Images Suggested on Review Screen"
-    static let NoOfImagesSelected = "No of images selected"
-    static let NoOfImagesDeleted = "No of images deleted"
-    static let totalNoOfImages = "Total no of images"
+    static let photosPermissionSystem = "photos_system"
+    static let photosPermissionCustom = "photos_custom"
+    static let photosPermissionSettings = "photos_settings"
+    static let scanBtn = "scan"
+    static let trashBtn = "trash"
+    static let NoOfImagesDeleted = "user_selected"
+    static let NoOfImagesSuggested = "suggested"
     static let feedback = "feedback"
+    static let feedbackPopUp = "feedback_popup"
     static let positive = "positive"
     static let negative = "negative"
-    static let share = "ShareApp"
-    static let permanentDeletion = "Permanent Deletion Count"
-    static let imagesRestore = "Restore Count"
+    static let share = "share_app"
+    static let permanentDeletionFirstTime = "permanent_deleted_1st_time"
+    static let permanentDeletion = "permanent_deleted"
+    static let imagesRestoredFirstTime = "restored_1st_time"
+    static let imagesRestored = "restored"
 
     //static let totalNoOfImages = "Images visible for the first time"
 

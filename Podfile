@@ -9,6 +9,7 @@ target 'NewProject' do
   pod 'SQLite.swift'
   # Pods for NewProject
   pod 'Firebase'
+pod 'FacebookCore'
   pod 'Google/Analytics'
 
 

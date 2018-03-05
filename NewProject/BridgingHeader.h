@@ -11,6 +11,7 @@
 
 #import <Google/Analytics.h>
 #import <MBProgressHUD.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 
 #endif /* BridgingHeader_h */

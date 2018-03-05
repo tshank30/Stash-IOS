@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import UserNotifications
 import SwiftyGif
 
 class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VCFinalDelegate, ReviewDelegate, FinalDelegate  {
@@ -32,7 +31,9 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     @IBAction func HomeToTrash(_ sender: Any) {
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.homeScreenName, action: Constants.trashBtn, label: "")
+        Preferences.shared.setFromTrashBtnLanding(landing: true)
+        
+        GoogleAnalytics.shared.sendEvent(category: Constants.homeScreen, action: Constants.trashBtn, label: "")
         
         performSegue(withIdentifier: "HomeToTrash", sender: nil)
         
@@ -205,7 +206,19 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
             self.totalImages = totalImages
             
             
+            
+            
             DispatchQueue.main.async(execute: {
+                
+                if(Preferences.shared.getFirstTimeSplashCounter()==1 && !Preferences.shared.getFirstTimeHomeScreenAnalyticsSentEvent())
+                {
+                    GoogleAnalytics.shared.sendEvent(category: Constants.homeScreen, action: "photos_1st_time", label: "", value: NSNumber(value: totalImages))
+                    Preferences.shared.setFirstTimeHomeScreenAnalyticsSentEvent()
+                }
+                else
+                {
+                    GoogleAnalytics.shared.sendEvent(category: Constants.homeScreen, action: "total_photos", label: "", value: NSNumber(value: totalImages))
+                }
                 
                 if(self.totalImages==0)
                 {
@@ -238,19 +251,6 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     
                     self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
                 }
-//                else if(junkCount==0)
-//                {
-//                    self.junkFoundView.isHidden=false
-//                    // self.scanningView.isHidden=false
-//                    self.junkNumber.text="Scanning"
-//                    self.junkPhotoFound.text = "Images"
-//                    self.scanBtn.isEnabled=true
-//                    self.scanBtn.backgroundColor = UtilityMethods.shared.UIColorFromRGB(rgbValue: 0x23c795)
-//                    self.scanBtn.layer.cornerRadius = 8
-//                    self.scanBtn.layer.borderWidth = 1
-//                    self.scanBtn.layer.borderColor = UIColor.init(red:35/255.0, green:199/255.0, blue:149/255.0, alpha: 1.0).cgColor
-//                    self.scanBtn.titleLabel?.textAlignment = NSTextAlignment.center
-//                }
                 else
                 {
                     self.junkFoundView.isHidden=false
@@ -281,7 +281,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
                     }
                 }
             })
-          //  }
+         
         }
     }
     
@@ -298,8 +298,29 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     override func viewDidAppear(_ animated: Bool) {
         
+        GoogleAnalytics.shared.sendEvent(category: Constants.homeScreen, action: "landing", label: "")
+        
         self.backgroundDbCall(callRefresh: false)
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
+        
+//        if(Preferences.shared.getFirstTimeReviewScreenAnalyticsSent())
+//        {
+//            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
+//
+//        }
+//        else{
+//            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenNameFirstTime)
+//            Preferences.shared.setFirstTimeHomeScreenAnalyticsSent()
+//
+//        }
+        
+        if(Preferences.shared.getFirstTimeSplashCounter()==1 && !Preferences.shared.getFirstTimeReviewScreenAnalyticsSent())
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenNameFirstTime)
+            Preferences.shared.setFirstTimeHomeScreenAnalyticsSent()
+        }
+        else{
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.homeScreenName)
+        }
         
     }
     
@@ -318,7 +339,7 @@ class HomeScreenViewController: UIViewController, UITextFieldDelegate, UIImagePi
         
         print("Button pressed")
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.homeScreenName, action: Constants.scanBtn, label: "")
+        GoogleAnalytics.shared.sendEvent(category: Constants.homeScreen, action: Constants.scanBtn, label: "")
         
         performSegue(withIdentifier: "HomeToScanning", sender: nil)
         

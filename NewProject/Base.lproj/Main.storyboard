@@ -736,11 +736,11 @@
                         <viewControllerLayoutGuide type="bottom" id="9lj-3S-Jee"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ffH-hs-MiS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="672"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="STz-wo-8O8">
-                                <rect key="frame" x="5" y="2" width="404" height="734"/>
+                                <rect key="frame" x="5" y="-62" width="404" height="734"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="DzO-Wg-tt8">
                                     <size key="itemSize" width="50" height="50"/>
@@ -820,14 +820,14 @@
                                 </connections>
                             </collectionView>
                             <view alpha="0.10000000000000001" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gbn-ey-Nde">
-                                <rect key="frame" x="0.0" y="662" width="414" height="74"/>
+                                <rect key="frame" x="0.0" y="598" width="414" height="74"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="74" id="WID-Kf-6TB"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EaT-Mi-VDe">
-                                <rect key="frame" x="10" y="676" width="192" height="50"/>
+                                <rect key="frame" x="10" y="612" width="192" height="50"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="Hta-Et-JEj"/>
@@ -841,7 +841,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GSY-MI-gCo">
-                                <rect key="frame" x="212" y="676" width="192" height="50"/>
+                                <rect key="frame" x="212" y="612" width="192" height="50"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="H80-DR-Y7C"/>
@@ -1115,6 +1115,9 @@ sharing the app with them</string>
                                                         <state key="normal" title="Not worth it">
                                                             <color key="titleColor" red="0.99989169840000003" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
+                                                        <connections>
+                                                            <action selector="feedbackOnNegativeRating:" destination="llc-4p-q7C" eventType="touchUpInside" id="yHS-al-xHd"/>
+                                                        </connections>
                                                     </button>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="handAndAbience" translatesAutoresizingMaskIntoConstraints="NO" id="M6A-dh-dV9">
                                                         <rect key="frame" x="235" y="25" width="110" height="117"/>
@@ -1323,6 +1326,6 @@ sharing the app with them</string>
         <image name="trashIcon" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Xeq-Bu-awn"/>
+        <segue reference="alz-vl-u5I"/>
     </inferredMetricsTieBreakers>
 </document>

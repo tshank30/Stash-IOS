@@ -79,19 +79,24 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             
         }
         
+        
+        
+        if((Preferences.shared.getFirstTimeSplashCounter()==2 && !Preferences.shared.getFromTrashBtnLanding()) || (Preferences.shared.getFirstTimeSplashCounter()==1 && Preferences.shared.getFromTrashBtnLanding()))
+        {
+            GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenCat, action: Constants.imagesRestoredFirstTime, label : "" , value: NSNumber(value : (deletionSet?.count)!))
+        }
+        else{
+            GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenCat, action: Constants.imagesRestored, label:"", value: NSNumber(value : (deletionSet?.count)!))
+        }
+        
         deletionSet?.removeAll()
         
-        GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.imagesRestore, label: "\(String(describing: deletionSet?.count))")
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            // DatabaseManagement.shared.serialQueue.sync {
+         
             self.dataModel=self.getData()
-                self.collectionView.reloadData()
-           // }
+            self.collectionView.reloadData()
             
         })
-        // self.navigationController?.popViewController(animated: true)
-        // self.dismiss(animated: true, completion: nil)
         
     }
     
@@ -105,22 +110,26 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
             self.deleteFolderContent(folderPath: URL(string: imageLocation)!)
             //if(DatabaseManagement.shared.updateRecoveryTransaction(mPath: deletionMap[imagePath]!)==true)
             
-          //  DatabaseManagement.shared.serialQueue.sync {
-                  DatabaseManagement.shared.deleteContact(mPath: deletionMap[imagePath]!)
-          //  }
-          
+            //  DatabaseManagement.shared.serialQueue.sync {
+            DatabaseManagement.shared.deleteContact(mPath: deletionMap[imagePath]!)
+            //  }
+            
             
         }
         
-        
-        
-        GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenName, action: Constants.permanentDeletion, label: "\(String(describing: deletionSet?.count))")
+        if((Preferences.shared.getFirstTimeSplashCounter()==2 &&  !Preferences.shared.getFromTrashBtnLanding()) || (Preferences.shared.getFirstTimeSplashCounter()==1 &&  Preferences.shared.getFromTrashBtnLanding()))
+        {
+           GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenCat, action: Constants.permanentDeletionFirstTime, label : "" , value: NSNumber(value : (deletionSet?.count)!))
+        }
+        else{
+            GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenCat, action: Constants.permanentDeletion, label : "" , value: NSNumber(value : (deletionSet?.count)!))
+        }
         
         deletionSet?.removeAll()
-      //   DatabaseManagement.shared.serialQueue.sync {
+        //   DatabaseManagement.shared.serialQueue.sync {
         dataModel=getData()
         collectionView.reloadData()
-      //  }
+        //  }
         
         //self.navigationController?.popViewController(animated: true)
         //self.dismiss(animated: true, completion: nil)
@@ -129,7 +138,24 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     
     override func viewDidAppear(_ animated: Bool) {
-        GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.trashScreenName)
+        //GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.trashScreenName)
+        
+        if(((Preferences.shared.getFirstTimeSplashCounter()==2 &&  !Preferences.shared.getFromTrashBtnLanding()) || (Preferences.shared.getFirstTimeSplashCounter()==1 &&  Preferences.shared.getFromTrashBtnLanding()))  && !Preferences.shared.getFirstTimeTrashScreenGaPreference())
+        {
+            GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.trashScreenNameFirstTime)
+            Preferences.shared.setFirstTimeTrashScreenGaPreference()
+        }
+        else
+        {
+          GoogleAnalytics.shared.sendScreenTracking(screenName: Constants.trashScreenName)
+        }
+        
+        GoogleAnalytics.shared.sendEvent(category: Constants.trashScreenCat, action: "landing", label : "")
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        Preferences.shared.setFromTrashBtnLanding(landing: false)
     }
     
     
@@ -215,12 +241,15 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         deletionSet=[String]()
         
-      //   DatabaseManagement.shared.serialQueue.sync {
+        //   DatabaseManagement.shared.serialQueue.sync {
         dataModel=getData()
-      //  }
+        //  }
         
         self.restoreBtn.layer.cornerRadius = 8
         self.deletePermanently.layer.cornerRadius = 8
+        
+       
+
         
         // Do any additional setup after loading the view.
     }
@@ -270,27 +299,15 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         
         if let imageView = cell.image{
-            
             let filePath = "file://\((dataModel?[indexPath.row].getTrashPath())!)"
             imageView.image = getImageFromPath(imageUrlPath: filePath)
-            // imageView.image = getAssetThumbnail(asset: (asset?[indexPath.row])!)
-            //imageView.image = load(fileName: (dataModel?[indexPath.row].getPath())!)
-            //imageView.image = getImageFromIdentifier(identifier: (dataModel?[indexPath.row].getIdentifier())!)
-            // imageView.image = getImage()
         }
-        
-        
-        // Configure the cell
         
         return cell
     }
     
     
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        
-        /*guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewCell  else {
-         fatalError("The dequeued cell is not an instance of CollectionViewCell.")
-         }*/
         
         if let _cell = collectionView.cellForItem(at: indexPath) as? TrashCollectionViewCell {
             let selector=_cell.imageSelection()
@@ -299,25 +316,16 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
                 dataModel?[indexPath.row].setChecked(checked: true)
                 deletionSet?.append((dataModel?[indexPath.row].getTrashPath())!)
                 deletionMap[(dataModel?[indexPath.row].getTrashPath())!]=(dataModel?[indexPath.row].getIdentifier())!
-                //deletionAsset?.append((dataModel?[indexPath.row].getPHAsset())!)
+                
             }
             else
             {
                 dataModel?[indexPath.row].setChecked(checked: false)
                 deletionSet = deletionSet?.filter { $0 != dataModel?[indexPath.row].getTrashPath() }
                 deletionMap.removeValue(forKey: (dataModel?[indexPath.row].getTrashPath())!)
-                //deletionAsset = deletionAsset?.filter { $0 != dataModel?[indexPath.row].getPHAsset() }
-                //deletionSet?.append((dataModel?[indexPath.row].getIdentifier())!)
+            
             }
         }
-        
-        
-        /* PHPhotoLibrary.shared().performChanges({
-         let imageAssetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: [(self.dataModel?[indexPath.row].getIdentifier())!], options: nil)
-         PHAssetChangeRequest.deleteAssets(imageAssetToDelete)
-         }, completionHandler: {success, error in
-         print(success ? "Success" : error )
-         })*/
         
         print("clicked")
         return true
@@ -340,38 +348,6 @@ class TrashViewController: UIViewController, UICollectionViewDataSource, UIColle
         default:  fatalError("Unexpected element kind")
         }
     }
-    
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    /* override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-     
-     }*/
-    
-    
-    /* override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
-     /*let cell = collectionView.cellForItem(at: indexPath)
-     
-     cell?.backgroundColor = UIColor.cyan*/
-     
-     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewCell  else {
-     fatalError("The dequeued cell is not an instance of CollectionViewCell.")
-     }
-     
-     cell.unSelectImage(cell.selection)
-     
-     
-     }*/
-    
-    
-    
-    
     
     func getData() -> [ImageModel]?
     {
